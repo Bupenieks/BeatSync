@@ -23,7 +23,7 @@ import com.spotify.sdk.android.player.SpotifyPlayer;
 public class SpotifyController implements
         SpotifyPlayer.NotificationCallback, ConnectionStateCallback
 {
-    private static SpotifyController spcInstance = new SpotifyController();
+    private static final SpotifyController spcInstance = new SpotifyController();
 
     public static SpotifyController getInstance() { return spcInstance; }
 
