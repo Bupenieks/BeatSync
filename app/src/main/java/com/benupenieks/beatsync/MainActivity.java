@@ -18,21 +18,23 @@ import com.spotify.sdk.android.player.SpotifyPlayer;
 
 public class MainActivity extends Activity {
 
-    private SpotifyController mPlayer = SpotifyController.init(this);
+    private SpotifyController mPlayer = SpotifyController.getInstance();
+
+    //button playLists = findViewById('toPlaylists');
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mPlayer.logIn();
+        mPlayer.logIn(this);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
         if (requestCode == SpotifyController.SPOTIFY_LOGIN_REQUEST_CODE) {
-            mPlayer.verifyLogIn(resultCode, intent);
+            mPlayer.verifyLogIn(this, resultCode, intent);
         }
     }
 

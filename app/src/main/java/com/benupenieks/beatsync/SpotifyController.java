@@ -20,48 +20,40 @@ import com.spotify.sdk.android.player.SpotifyPlayer;
  * Created by Ben on 2017-07-21.
  */
 
-public class SpotifyController implements SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
-    private static SpotifyController spcInstance = null;
+public class SpotifyController implements
+        SpotifyPlayer.NotificationCallback, ConnectionStateCallback
+{
+    private static SpotifyController spcInstance = new SpotifyController();
 
     public static SpotifyController getInstance() { return spcInstance; }
-
-    public static SpotifyController init(Activity parentActivity) {
-        if (spcInstance == null) {
-            spcInstance = new SpotifyController(parentActivity);
-        }
-        return spcInstance;
-    }
 
     private static final String CLIENT_ID    = "0ca1042db69d4e759c7e8995f6ef0f50";
     private static final String REDIRECT_URI = "beatsync-login://callback";
     public static final int SPOTIFY_LOGIN_REQUEST_CODE = 12345;
 
-    private Activity mParentActivity;
     private Player mPlayer;
 
-    private SpotifyController(Activity parentActivity) {
-        mParentActivity = parentActivity;
-    }
+    private SpotifyController() {}
 
     public void playTrack(String uri) {
         Log.d("SpotifyController", "Playing track: " + uri);
         mPlayer.playUri(null, uri, 0, 0);
     }
 
-    public void logIn() {
+    public void logIn(Activity parentActivity) {
         AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID,
                 AuthenticationResponse.Type.TOKEN,
                 REDIRECT_URI);
         builder.setScopes(new String[]{"user-read-private", "streaming"});
         AuthenticationRequest request = builder.build();
 
-        AuthenticationClient.openLoginActivity(mParentActivity, SPOTIFY_LOGIN_REQUEST_CODE, request);
+        AuthenticationClient.openLoginActivity(parentActivity, SPOTIFY_LOGIN_REQUEST_CODE, request);
     }
 
-    public void verifyLogIn(int resultCode, Intent intent) {
+    public void verifyLogIn(Activity parentActivity, int resultCode, Intent intent) {
         AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
         if (response.getType() == AuthenticationResponse.Type.TOKEN) {
-            Config playerConfig = new Config(mParentActivity, response.getAccessToken(), CLIENT_ID);
+            Config playerConfig = new Config(parentActivity, response.getAccessToken(), CLIENT_ID);
             Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
                 @Override
                 public void onInitialized(SpotifyPlayer spotifyPlayer) {
@@ -72,7 +64,8 @@ public class SpotifyController implements SpotifyPlayer.NotificationCallback, Co
 
                 @Override
                 public void onError(Throwable throwable) {
-                    Log.e("SpotifyController", "Could not initialize player: " + throwable.getMessage());
+                    Log.e("SpotifyController", "Could not initialize player: "
+                            + throwable.getMessage());
                 }
             });
         }
