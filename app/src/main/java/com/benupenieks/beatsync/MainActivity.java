@@ -28,10 +28,11 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         mPlayer.logIn(this);
-        final Button playlists = findViewById("toPlaylists");
-        playlists.setOnClickListener(new View.OnClickListener() {
+
+        final Button toPlaylists = (Button) findViewById(R.id.toPlaylists);
+        toPlaylists.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent toPlaylistSelector = new Intent();
+                Intent toPlaylistSelector = new Intent(MainActivity.this, PlaylistSelection.class);
                 MainActivity.this.startActivity(toPlaylistSelector);
             }
         });
