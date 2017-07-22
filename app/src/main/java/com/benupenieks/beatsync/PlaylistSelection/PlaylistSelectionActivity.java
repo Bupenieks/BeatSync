@@ -1,4 +1,4 @@
-package com.benupenieks.beatsync;
+package com.benupenieks.beatsync.PlaylistSelection;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -16,11 +16,13 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.android.volley.Response;
 import com.android.volley.Request;
+import com.benupenieks.beatsync.R;
+import com.benupenieks.beatsync.SpotifyController;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class PlaylistSelection extends AppCompatActivity {
+public class PlaylistSelectionActivity extends AppCompatActivity implements PlaylistView {
 
     private RequestQueue mRequestQueue;
     private TextView mPlaylistsContainer;

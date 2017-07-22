@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".MainActivity.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,13 +23,13 @@
             android:name="com.spotify.sdk.android.authentication.LoginActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity
-            android:name=".PlaylistSelection"
+            android:name=".PlaylistSelection.PlaylistSelectionActivity"
             android:label="@string/title_activity_playlist_selection"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".MainActivity.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.benupenieks.beatsync.MainActivity" />
+                android:value="com.benupenieks.beatsync.MainActivity.MainActivity" />
         </activity>
     </application>
 

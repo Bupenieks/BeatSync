@@ -38,12 +38,12 @@ public class SpotifyController implements
         SpotifyPlayer.NotificationCallback, ConnectionStateCallback
 {
     private static final SpotifyController spcInstance = new SpotifyController();
-
     public static SpotifyController getInstance() { return spcInstance; }
+    private SpotifyController() {}
 
     private static final String CLIENT_ID    = "0ca1042db69d4e759c7e8995f6ef0f50";
     private static final String REDIRECT_URI = "beatsync-login://callback";
-    public static final int SPOTIFY_LOGIN_REQUEST_CODE = 12345;
+    public  static final int SPOTIFY_LOGIN_REQUEST_CODE = 12345;
 
     public static String mUserAccessToken;
     public static String mUserId;
@@ -51,8 +51,6 @@ public class SpotifyController implements
 
     private Player mPlayer;
 
-    private SpotifyController() {
-    }
 
     public void playTrack(String uri) {
         Log.d("SpotifyController", "Playing track: " + uri);
@@ -102,6 +100,7 @@ public class SpotifyController implements
     @Override
     public void onLoggedOut() {
         Log.d("SpotifyController", "Logged out");
+        mUserId = null;
     }
 
     @Override
