@@ -79,10 +79,9 @@ public class SpotifyController implements
         updatePlaylists();
     }
 
-    // FIXME Test
-    public void playTrack(String uri) {
-        Log.d("SpotifyController", "Playing track: " + uri);
-        mPlayer.playUri(null, uri, 0, 0);
+    public void playTrack(Track track) {
+        Log.d("SpotifyController", "Playing track: " + track.getName());
+        mPlayer.playUri(null, track.getUri(), 0, 0);
     }
 
     public void logIn(Activity parentActivity) {

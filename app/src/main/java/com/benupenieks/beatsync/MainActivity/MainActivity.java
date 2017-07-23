@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
             @Override
             public void onClick(View view) {
                 Track track = SpotifyController.getInstance().getRandomTrack();
-                SpotifyController.getInstance().playTrack(track.getUri());
+                SpotifyController.getInstance().playTrack(track);
             }
         });
     }
