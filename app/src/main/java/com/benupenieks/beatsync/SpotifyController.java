@@ -98,7 +98,7 @@ public class SpotifyController implements
                     mPlayer.addConnectionStateCallback(SpotifyController.this);
                     mPlayer.addNotificationCallback(SpotifyController.this);
                     mRequestQueue = VolleyRequestQueue.getInstance(parentActivity).getRequestQueue();
-                    spcInstance.updateUserId();
+                    spcInstance.updateUserInfo();
                 }
 
                 @Override

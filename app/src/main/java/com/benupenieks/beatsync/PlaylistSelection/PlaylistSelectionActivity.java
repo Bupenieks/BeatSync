@@ -6,21 +6,27 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import com.benupenieks.beatsync.R;
 import com.benupenieks.beatsync.SpotifyController;
 
+import java.util.List;
+
 public class PlaylistSelectionActivity extends AppCompatActivity implements PlaylistContract.View {
 
-    private TextView mPlaylistsContainer;
+    private PlaylistPresenter mPresenter;
+
+    private static final SpotifyController mSpotify = SpotifyController.getInstance();
+    private List<Playlist> mPlaylists;
+
+    private RadioGroup mPlaylistsContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playlist_selection);
-
-        mPlaylistsContainer = (TextView) findViewById(R.id.playlist_list);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -33,5 +39,34 @@ public class PlaylistSelectionActivity extends AppCompatActivity implements Play
             }
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        mPlaylistsContainer = (RadioGroup) findViewById(R.id.playlist_selector);
+
+        attachPresenter();
+        mPresenter.onInit();
+    }
+
+    @Override
+    public void attachPresenter() {
+        mPresenter = (PlaylistPresenter) getLastCustomNonConfigurationInstance();
+        if (mPresenter == null) {
+            mPresenter = new PlaylistPresenter();
+        }
+        mPresenter.attachView(this);
+    }
+
+
+    @Override
+    public Object onRetainCustomNonConfigurationInstance() {
+        return mPresenter;
+    }
+
+    @Override
+    public void displayPlaylists(List<Playlist> allPlaylists) {
+        for (Playlist p : allPlaylists) {
+            RadioButton rb = new RadioButton(this);
+            rb.setText(p.getName());
+            mPlaylistsContainer.addView(rb);
+        }
     }
 }

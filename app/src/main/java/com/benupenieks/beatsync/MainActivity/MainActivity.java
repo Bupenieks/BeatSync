@@ -32,8 +32,9 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
             }
         });
     }
-
-    private void attachPresenter() {
+    // TODO: Abstract base presenter class?
+    @Override
+    public void attachPresenter() {
         mPresenter = (MainPresenter) getLastCustomNonConfigurationInstance();
         if (mPresenter == null) {
             mPresenter = new MainPresenter();

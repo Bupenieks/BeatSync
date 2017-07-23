@@ -6,14 +6,14 @@ package com.benupenieks.beatsync.PlaylistSelection;
 
 public class Playlist {
     private String mName;
-    private String mPlaylitsId;
+    private String mPlaylistId;
     private String mTrackEndPoint;
     private String mUri;
     private int mNumTracks;
 
     public Playlist (String name, String id, String href, String uri, int numTracks) {
         mName = name;
-        mPlaylitsId = id;
+        mPlaylistId = id;
         mTrackEndPoint = href;
         mUri = uri;
         mNumTracks = numTracks;
@@ -37,14 +37,14 @@ public class Playlist {
 
     public String getPlaylitsId() {
 
-        return mPlaylitsId;
+        return mPlaylistId;
     }
 
     @Override
     public String toString() {
         return "Playlist{" +
                 "mName='" + mName + '\'' +
-                ", mPlaylitsId='" + mPlaylitsId + '\'' +
+                ", mPlaylistId='" + mPlaylistId + '\'' +
                 ", mTrackEndPoint='" + mTrackEndPoint + '\'' +
                 ", mUri='" + mUri + '\'' +
                 ", mNumTracks=" + mNumTracks +

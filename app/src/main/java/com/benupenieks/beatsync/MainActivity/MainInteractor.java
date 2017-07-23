@@ -16,10 +16,12 @@ public class MainInteractor implements MainContract.Interactor {
 
     public MainInteractor() {}
 
+    @Override
     public void spotifyLogIn(MainContract.View view) {
         mSpotify.logIn((Activity) view);
     }
 
+    @Override
     public void verifySpotifyLogin(MainContract.View view, int resultCode, Intent intent) {
         mSpotify.verifyLogIn((Activity) view, resultCode, intent);
     }

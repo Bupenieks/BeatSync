@@ -10,7 +10,7 @@ import android.content.Intent;
 
 public interface MainContract {
     interface View {
-
+        void attachPresenter();
     }
 
     interface Presenter {
