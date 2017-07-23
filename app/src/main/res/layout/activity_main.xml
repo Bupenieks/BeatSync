@@ -26,4 +26,13 @@
         android:layout_marginLeft="8dp"
         app:layout_constraintLeft_toLeftOf="parent" />
 
+    <Button
+        android:id="@+id/play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:text="Play"
+        app:layout_constraintLeft_toRightOf="@+id/toPlaylists"
+        tools:layout_editor_absoluteY="8dp" />
+
 </android.support.constraint.ConstraintLayout>

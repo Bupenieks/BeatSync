@@ -35,10 +35,7 @@ public class Playlist {
         return mNumTracks;
     }
 
-    public String getPlaylitsId() {
-
-        return mPlaylistId;
-    }
+    public String getId() { return mPlaylistId; }
 
     @Override
     public String toString() {

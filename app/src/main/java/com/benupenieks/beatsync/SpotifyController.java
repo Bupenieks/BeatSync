@@ -1,7 +1,6 @@
 package com.benupenieks.beatsync;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
@@ -11,8 +10,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.benupenieks.beatsync.PlaylistSelection.Playlist;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
@@ -20,6 +17,7 @@ import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.spotify.sdk.android.player.Config;
 import com.spotify.sdk.android.player.ConnectionStateCallback;
 import com.spotify.sdk.android.player.Error;
+import com.spotify.sdk.android.player.Metadata;
 import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.PlayerEvent;
 import com.spotify.sdk.android.player.Spotify;
@@ -55,6 +53,7 @@ public class SpotifyController implements
 
     private List<Playlist> mPlaylists = new ArrayList<>();
     private List<Playlist> mSelectedPlaylists = new ArrayList<>();
+    private List<JSONObject> mTrackList = new ArrayList<>();
 
     private RequestQueue mRequestQueue;
     private Player mPlayer;
@@ -73,6 +72,7 @@ public class SpotifyController implements
 
     public void setSelectedPlaylists(List<Playlist> selectedPlaylists) {
         mSelectedPlaylists = selectedPlaylists;
+        updateTrackList();
     }
 
     public void updateUserInfo() {
@@ -80,9 +80,14 @@ public class SpotifyController implements
         updatePlaylists();
     }
 
-    public void playTrack(String uri) {
-        Log.d("SpotifyController", "Playing track: " + uri);
-        mPlayer.playUri(null, uri, 0, 0);
+    // FIXME Test
+    public void playTrack() {
+        //Log.d("SpotifyController", "Playing track: " + uri);
+        try {
+            mPlayer.playUri(null, mTrackList.get(0).getString("uri"), 0, 0);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     public void logIn(Activity parentActivity) {
@@ -122,7 +127,6 @@ public class SpotifyController implements
     @Override
     public void onLoggedIn() {
         Log.d("SpotifyController", "User logged in");
-        mPlayer.playUri(null, "spotify:track:2TpxZ7JUBn3uw46aR7qd6V", 0, 0);
     }
 
     @Override
@@ -182,7 +186,7 @@ public class SpotifyController implements
                     try {
                         mUserId = response.getString("id");
                     } catch (JSONException e) {
-                        Log.e("SpotifyController", "updateUserID: User ID does not exist in response. Exception: ", e);
+                        e.printStackTrace();
                     }
                 }
             }, new Response.ErrorListener() {
@@ -193,7 +197,7 @@ public class SpotifyController implements
         }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String,String> params = new HashMap<String, String>();
+                Map<String,String> params = new HashMap<>();
                 params.put("Authorization","Authorization: Bearer " + mUserAccessToken);
                 return params;
 
@@ -225,8 +229,9 @@ public class SpotifyController implements
                                 mPlaylists.add(playlist);
                             }
                             nextPage = response.getString("next");
+                            // TODO: Take care of pagination for lots of playlists
                         } catch (JSONException e) {
-                            Log.e("SpotifyController", "updatePlaylists: Failed. Exception: ", e);
+                            e.printStackTrace();
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -237,7 +242,7 @@ public class SpotifyController implements
         }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String,String> params = new HashMap<String, String>();
+                Map<String,String> params = new HashMap<>();
                 params.put("Authorization","Authorization: Bearer " + mUserAccessToken);
                 return params;
 
@@ -245,6 +250,48 @@ public class SpotifyController implements
         };
 
         mRequestQueue.add(jsonRequest);
+    }
+
+    public void updateTrackList() {
+
+        for (Playlist playlist : mSelectedPlaylists) {
+            String requestUrl = "https://api.spotify.com/v1/users/" + mUserId + "/playlists/"
+                                        + playlist.getId() + "/tracks";
+            JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, requestUrl, null,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            Log.d("mResponseQueue", "Response Received");
+                            String nextPage;
+                            try {
+                                JSONArray items = response.getJSONArray("items");
+                                for (int i = 0; i < items.length(); i++) {
+                                    mTrackList.add(items.getJSONObject(i).getJSONObject("track"));
+                                }
+                                // TODO: Take care of pagination for lots of tracks
+                                nextPage = response.getString("next");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.d("SpotifyController", "updateTrackList failed");
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<>();
+                    params.put("Authorization", "Authorization: Bearer " + mUserAccessToken);
+                    return params;
+                }
+            };
+
+            mRequestQueue.add(jsonRequest);
+        }
+        // FIXME
+
     }
 
 }

@@ -14,6 +14,8 @@ import com.benupenieks.beatsync.PlaylistSelection.PlaylistSelectionActivity;
 import com.benupenieks.beatsync.R;
 import com.benupenieks.beatsync.SpotifyController;
 
+import org.json.JSONException;
+
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MainContract.View{
@@ -34,6 +36,14 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
             public void onClick(View v) {
                 Intent toPlaylistSelector = new Intent(MainActivity.this, PlaylistSelectionActivity.class);
                 MainActivity.this.startActivity(toPlaylistSelector);
+            }
+        });
+
+        final Button play = (Button) findViewById(R.id.play);
+        play.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SpotifyController.getInstance().playTrack();
             }
         });
     }
