@@ -9,11 +9,9 @@
     tools:context="com.benupenieks.beatsync.PlaylistSelection.PlaylistSelectionActivity"
     tools:showIn="@layout/activity_playlist_selection">
 
-    <RadioGroup
+    <LinearLayout
         android:id="@+id/playlist_selector"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-    </RadioGroup>
-
+        android:layout_height="wrap_content"
+        android:orientation="vertical"></LinearLayout>
 </android.support.v4.widget.NestedScrollView>

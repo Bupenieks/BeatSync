@@ -18,7 +18,9 @@ public class MainInteractor implements MainContract.Interactor {
 
     @Override
     public void spotifyLogIn(MainContract.View view) {
-        mSpotify.logIn((Activity) view);
+        if (mSpotify.getUserId() == null) {
+            mSpotify.logIn((Activity) view);
+        }
     }
 
     @Override

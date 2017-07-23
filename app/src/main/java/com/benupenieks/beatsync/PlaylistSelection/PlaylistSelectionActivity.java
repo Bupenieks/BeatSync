@@ -1,27 +1,33 @@
 package com.benupenieks.beatsync.PlaylistSelection;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 
 import com.benupenieks.beatsync.R;
 import com.benupenieks.beatsync.SpotifyController;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PlaylistSelectionActivity extends AppCompatActivity implements PlaylistContract.View {
 
     private PlaylistPresenter mPresenter;
 
-    private static final SpotifyController mSpotify = SpotifyController.getInstance();
-    private List<Playlist> mPlaylists;
+    private LinearLayout mPlaylistsContainer;
 
-    private RadioGroup mPlaylistsContainer;
+    Map<CheckBox, Playlist> mCheckBoxPlaylistMap = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +46,7 @@ public class PlaylistSelectionActivity extends AppCompatActivity implements Play
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mPlaylistsContainer = (RadioGroup) findViewById(R.id.playlist_selector);
+        mPlaylistsContainer = (LinearLayout) findViewById(R.id.playlist_selector);
 
         attachPresenter();
         mPresenter.onInit();
@@ -62,11 +68,32 @@ public class PlaylistSelectionActivity extends AppCompatActivity implements Play
     }
 
     @Override
-    public void displayPlaylists(List<Playlist> allPlaylists) {
-        for (Playlist p : allPlaylists) {
-            RadioButton rb = new RadioButton(this);
-            rb.setText(p.getName());
-            mPlaylistsContainer.addView(rb);
+    public void displayPlaylists(List<Playlist> allPlaylists, List<Playlist> selectedPlaylists) {
+        // TODO: put size values in resources.
+        for (final Playlist playlist : allPlaylists) {
+            CheckBox cb = new CheckBox(this);
+            cb.setText(playlist.getName());
+            cb.setTextSize(TypedValue.COMPLEX_UNIT_SP, 25);
+            cb.setLines(2);
+            mCheckBoxPlaylistMap.put(cb, playlist);
+            mPlaylistsContainer.addView(cb);
+            if (selectedPlaylists.contains(playlist)) {
+                cb.setChecked(true);
+            }
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        List<Playlist> selectedPlaylists = new ArrayList<>();
+        for (int i = 0; i < mPlaylistsContainer.getChildCount(); i++) {
+            CheckBox cb = (CheckBox) mPlaylistsContainer.getChildAt(i);
+            if (cb.isChecked()) {
+                selectedPlaylists.add(mCheckBoxPlaylistMap.get(cb));
+            }
+        }
+        mPresenter.setSelectedPlaylists(selectedPlaylists);
+        mPresenter.detatchView();
+        super.onDestroy();
     }
 }

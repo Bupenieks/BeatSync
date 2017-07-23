@@ -4,12 +4,17 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
+import com.benupenieks.beatsync.PlaylistSelection.Playlist;
 import com.benupenieks.beatsync.PlaylistSelection.PlaylistSelectionActivity;
 import com.benupenieks.beatsync.R;
 import com.benupenieks.beatsync.SpotifyController;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MainContract.View{
 
@@ -51,8 +56,10 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
-        if (requestCode == SpotifyController.SPOTIFY_LOGIN_REQUEST_CODE) {
-            mPresenter.onSpotifyLoginReceived(resultCode, intent);
+        switch (requestCode) {
+            case SpotifyController.SPOTIFY_LOGIN_REQUEST_CODE:
+                mPresenter.onSpotifyLoginReceived(resultCode, intent);
+                break;
         }
     }
 

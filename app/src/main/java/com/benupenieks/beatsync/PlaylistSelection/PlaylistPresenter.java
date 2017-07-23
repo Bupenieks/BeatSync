@@ -31,11 +31,16 @@ public class PlaylistPresenter implements
     }
 
     @Override
-    public void onInitSuccess(List<Playlist> allPlaylists) {
-        mView.displayPlaylists(allPlaylists);
+    public void onInitSuccess(List<Playlist> allPlaylists, List<Playlist> selectedPlaylists) {
+        mView.displayPlaylists(allPlaylists, selectedPlaylists);
     }
 
     @Override
     public void onInitError() {
+    }
+
+    @Override
+    public void setSelectedPlaylists(List<Playlist> selectedPlaylists) {
+        mInteractor.updateSelectedPlaylists(selectedPlaylists);
     }
 }

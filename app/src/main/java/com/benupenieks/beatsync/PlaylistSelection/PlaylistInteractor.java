@@ -14,15 +14,15 @@ public class PlaylistInteractor implements PlaylistContract.Interactor {
 
     private static final SpotifyController mSpotify = SpotifyController.getInstance();
 
-    private List<Playlist> mAllPlaylists;
-    private List<Playlist> mSelectedPlaylists;
-
-    public PlaylistInteractor() {
-    }
+    public PlaylistInteractor() {}
 
     @Override
     public void initPlaylists(playlistConfigListener listener) {
-        mAllPlaylists = mSpotify.getPlaylists();
-        listener.onInitSuccess(mAllPlaylists);
+        listener.onInitSuccess(mSpotify.getAllPlaylists(), mSpotify.getSelectedPlaylists());
+    }
+
+    @Override
+    public void updateSelectedPlaylists(List<Playlist> selectedPlaylists) {
+        mSpotify.setSelectedPlaylists(selectedPlaylists);
     }
 }

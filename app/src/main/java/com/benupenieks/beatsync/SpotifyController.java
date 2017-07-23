@@ -50,20 +50,29 @@ public class SpotifyController implements
     private static final String REDIRECT_URI = "beatsync-login://callback";
     public  static final int SPOTIFY_LOGIN_REQUEST_CODE = 12345;
 
-    private String mUserAccessToken;
-    private String mUserId;
+    private String mUserAccessToken = null;
+    private String mUserId = null;
 
     private List<Playlist> mPlaylists = new ArrayList<>();
+    private List<Playlist> mSelectedPlaylists = new ArrayList<>();
 
     private RequestQueue mRequestQueue;
     private Player mPlayer;
 
-    public List<Playlist> getPlaylists() {
+    public List<Playlist> getAllPlaylists() {
         return Collections.unmodifiableList(mPlaylists);
+    }
+
+    public List<Playlist> getSelectedPlaylists() {
+        return mSelectedPlaylists;
     }
 
     public String getUserId() {
         return mUserId;
+    }
+
+    public void setSelectedPlaylists(List<Playlist> selectedPlaylists) {
+        mSelectedPlaylists = selectedPlaylists;
     }
 
     public void updateUserInfo() {
@@ -120,6 +129,7 @@ public class SpotifyController implements
     public void onLoggedOut() {
         Log.d("SpotifyController", "Logged out");
         mUserId = null;
+        mPlaylists = null;
     }
 
     @Override
