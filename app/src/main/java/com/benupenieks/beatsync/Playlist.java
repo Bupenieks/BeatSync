@@ -4,6 +4,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by Ben on 2017-07-22.
@@ -44,8 +45,18 @@ public class Playlist {
 
     public String getId() { return mPlaylistId;}
 
+    public boolean isEmpty() {
+        return mTrackList.isEmpty();
+    }
+
     public void addTrack(JSONObject track) {
         mTrackList.add(new Track(track));
+    }
+
+    public Track getRandomTrack() {
+        Random rand = new Random();
+        int index = rand.nextInt(mTrackList.size());
+        return mTrackList.get(index);
     }
 
     @Override

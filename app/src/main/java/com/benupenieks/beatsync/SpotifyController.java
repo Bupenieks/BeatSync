@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * Created by Ben on 2017-07-21.
@@ -79,13 +80,9 @@ public class SpotifyController implements
     }
 
     // FIXME Test
-    public void playTrack() {
-        //Log.d("SpotifyController", "Playing track: " + uri);
-        try {
-            mPlayer.playUri(null, mTrackList.get(0).getString("uri"), 0, 0);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    public void playTrack(String uri) {
+        Log.d("SpotifyController", "Playing track: " + uri);
+        mPlayer.playUri(null, uri, 0, 0);
     }
 
     public void logIn(Activity parentActivity) {
@@ -171,6 +168,13 @@ public class SpotifyController implements
 
     public void onDestroy() {
         Spotify.destroyPlayer(this);
+    }
+    // TODO: Take care of empty playlists
+    // TODO: Multiple playlist sle
+    public Track getRandomTrack() {
+        Random rand = new Random();
+        int index = rand.nextInt(mSelectedPlaylists.size());
+        return mSelectedPlaylists.get(index).getRandomTrack();
     }
 
     private void updateUserId() {

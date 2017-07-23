@@ -9,6 +9,7 @@ import android.widget.Button;
 import com.benupenieks.beatsync.PlaylistSelection.PlaylistSelectionActivity;
 import com.benupenieks.beatsync.R;
 import com.benupenieks.beatsync.SpotifyController;
+import com.benupenieks.beatsync.Track;
 
 public class MainActivity extends AppCompatActivity implements MainContract.View{
 
@@ -35,7 +36,8 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SpotifyController.getInstance().playTrack();
+                Track track = SpotifyController.getInstance().getRandomTrack();
+                SpotifyController.getInstance().playTrack(track.getUri());
             }
         });
     }

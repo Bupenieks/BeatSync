@@ -83,6 +83,7 @@ public class PlaylistSelectionActivity extends AppCompatActivity implements Play
 
     @Override
     public void onDestroy() {
+        // TODO: Add spinner to wait for playlist tracks to load.
         List<Playlist> selectedPlaylists = new ArrayList<>();
         for (int i = 0; i < mPlaylistsContainer.getChildCount(); i++) {
             CheckBox cb = (CheckBox) mPlaylistsContainer.getChildAt(i);
