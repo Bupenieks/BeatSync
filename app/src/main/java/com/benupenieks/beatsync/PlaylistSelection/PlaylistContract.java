@@ -1,8 +1,6 @@
 package com.benupenieks.beatsync.PlaylistSelection;
 
-import android.content.Intent;
-
-import com.benupenieks.beatsync.MainActivity.MainContract;
+import com.benupenieks.beatsync.Playlist;
 
 import java.util.List;
 

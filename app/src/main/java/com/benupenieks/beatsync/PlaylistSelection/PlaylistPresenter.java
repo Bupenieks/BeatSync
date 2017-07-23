@@ -1,6 +1,6 @@
 package com.benupenieks.beatsync.PlaylistSelection;
 
-import com.benupenieks.beatsync.MainActivity.MainContract;
+import com.benupenieks.beatsync.Playlist;
 
 import java.util.List;
 

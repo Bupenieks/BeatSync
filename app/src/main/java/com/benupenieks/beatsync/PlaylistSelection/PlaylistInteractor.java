@@ -1,7 +1,6 @@
 package com.benupenieks.beatsync.PlaylistSelection;
 
-import android.media.SoundPool;
-
+import com.benupenieks.beatsync.Playlist;
 import com.benupenieks.beatsync.SpotifyController;
 
 import java.util.List;

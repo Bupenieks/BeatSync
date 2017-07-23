@@ -1,22 +1,14 @@
 package com.benupenieks.beatsync.MainActivity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 
-import com.benupenieks.beatsync.PlaylistSelection.Playlist;
 import com.benupenieks.beatsync.PlaylistSelection.PlaylistSelectionActivity;
 import com.benupenieks.beatsync.R;
 import com.benupenieks.beatsync.SpotifyController;
-
-import org.json.JSONException;
-
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MainContract.View{
 

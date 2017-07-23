@@ -1,4 +1,9 @@
-package com.benupenieks.beatsync.PlaylistSelection;
+package com.benupenieks.beatsync;
+
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Ben on 2017-07-22.
@@ -10,6 +15,8 @@ public class Playlist {
     private String mTrackEndPoint;
     private String mUri;
     private int mNumTracks;
+
+    private List<Track> mTrackList = new ArrayList<>();
 
     public Playlist (String name, String id, String href, String uri, int numTracks) {
         mName = name;
@@ -35,7 +42,11 @@ public class Playlist {
         return mNumTracks;
     }
 
-    public String getId() { return mPlaylistId; }
+    public String getId() { return mPlaylistId;}
+
+    public void addTrack(JSONObject track) {
+        mTrackList.add(new Track(track));
+    }
 
     @Override
     public String toString() {

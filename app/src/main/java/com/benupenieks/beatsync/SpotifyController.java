@@ -10,14 +10,12 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.benupenieks.beatsync.PlaylistSelection.Playlist;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.spotify.sdk.android.player.Config;
 import com.spotify.sdk.android.player.ConnectionStateCallback;
 import com.spotify.sdk.android.player.Error;
-import com.spotify.sdk.android.player.Metadata;
 import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.PlayerEvent;
 import com.spotify.sdk.android.player.Spotify;
@@ -177,121 +175,118 @@ public class SpotifyController implements
 
     private void updateUserId() {
         String requestUrl = "https://api.spotify.com/v1/me";
-        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, requestUrl, null,
-            new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    // Display the first 500 characters of the response string.
-                    Log.d("mResponseQueue", "Response Received");
-                    try {
-                        mUserId = response.getString("id");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }, new Response.ErrorListener() {
-        @Override
-        public void onErrorResponse(VolleyError error) {
-            Log.d("SpotifyController", "updateUserId failed");
-        }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String,String> params = new HashMap<>();
-                params.put("Authorization","Authorization: Bearer " + mUserAccessToken);
-                return params;
 
+        Response.Listener responseListener = new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                // Display the first 500 characters of the response string.
+                Log.d("mResponseQueue", "Response Received");
+                try {
+                    mUserId = response.getString("id");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         };
 
-        mRequestQueue.add(jsonRequest);
+        Response.ErrorListener errorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("SpotifyController", "updateUserId failed");
+            }
+        };
+
+        JSONApiGetRequest(requestUrl, responseListener, errorListener);
     }
 
     private void updatePlaylists() {
         final String requestUrl = "https://api.spotify.com/v1/me/playlists";
-        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, requestUrl, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.d("mResponseQueue", "Response Received");
-                        String nextPage;
-                        try {
-                            JSONArray items = response.getJSONArray("items");
-                            for (int i = 0; i < items.length(); i++) {
-                                JSONObject jsonObj = items.getJSONObject(i);
-                                Playlist playlist = new Playlist(
-                                        jsonObj.getString("name"),
-                                        jsonObj.getString("id"),
-                                        jsonObj.getJSONObject("tracks").getString("href"),
-                                        jsonObj.getString("uri"),
-                                        jsonObj.getJSONObject("tracks").getInt("total")
-                                );
-                                mPlaylists.add(playlist);
-                            }
-                            nextPage = response.getString("next");
-                            // TODO: Take care of pagination for lots of playlists
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+        Response.Listener responseListener = new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.d("mResponseQueue", "Response Received");
+                String nextPage;
+                try {
+                    JSONArray items = response.getJSONArray("items");
+                    for (int i = 0; i < items.length(); i++) {
+                        JSONObject jsonObj = items.getJSONObject(i);
+                        Playlist playlist = new Playlist(
+                                jsonObj.getString("name"),
+                                jsonObj.getString("id"),
+                                jsonObj.getJSONObject("tracks").getString("href"),
+                                jsonObj.getString("uri"),
+                                jsonObj.getJSONObject("tracks").getInt("total")
+                        );
+                        mPlaylists.add(playlist);
                     }
-                }, new Response.ErrorListener() {
+                    nextPage = response.getString("next");
+                    // TODO: Take care of pagination for lots of playlists
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        Response.ErrorListener errorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d("SpotifyController", "updatePlaylists failed");
             }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String,String> params = new HashMap<>();
-                params.put("Authorization","Authorization: Bearer " + mUserAccessToken);
-                return params;
-
-            }
         };
 
-        mRequestQueue.add(jsonRequest);
+        JSONApiGetRequest(requestUrl, responseListener, errorListener);
     }
 
     public void updateTrackList() {
 
-        for (Playlist playlist : mSelectedPlaylists) {
+        for (final Playlist playlist : mSelectedPlaylists) {
+
             String requestUrl = "https://api.spotify.com/v1/users/" + mUserId + "/playlists/"
-                                        + playlist.getId() + "/tracks";
-            JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, requestUrl, null,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            Log.d("mResponseQueue", "Response Received");
-                            String nextPage;
-                            try {
-                                JSONArray items = response.getJSONArray("items");
-                                for (int i = 0; i < items.length(); i++) {
-                                    mTrackList.add(items.getJSONObject(i).getJSONObject("track"));
-                                }
-                                // TODO: Take care of pagination for lots of tracks
-                                nextPage = response.getString("next");
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+                    + playlist.getId() + "/tracks";
+
+            Response.Listener<JSONObject> responseListener = new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Log.d("mResponseQueue", "Response Received");
+                    String nextPage;
+                    try {
+                        JSONArray items = response.getJSONArray("items");
+                        for (int i = 0; i < items.length(); i++) {
+                            playlist.addTrack(items.getJSONObject(i).getJSONObject("track"));
                         }
-                    }, new Response.ErrorListener() {
+                        // TODO: Take care of pagination for lots of tracks
+                        nextPage = response.getString("next");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+
+            Response.ErrorListener errorListener = new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     Log.d("SpotifyController", "updateTrackList failed");
                 }
-            }) {
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> params = new HashMap<>();
-                    params.put("Authorization", "Authorization: Bearer " + mUserAccessToken);
-                    return params;
-                }
             };
 
-            mRequestQueue.add(jsonRequest);
+            JSONApiGetRequest(requestUrl, responseListener, errorListener);
         }
-        // FIXME
+    }
 
+    public void JSONApiGetRequest(String requestUrl, Response.Listener listener,
+                                    Response.ErrorListener errorListener) {
+
+        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, requestUrl, null,
+                listener, errorListener) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("Authorization", "Authorization: Bearer " + mUserAccessToken);
+                return params;
+            }
+        };
+        mRequestQueue.add(jsonRequest);
     }
 
 }
