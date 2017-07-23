@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
         if (requestCode == SpotifyController.SPOTIFY_LOGIN_REQUEST_CODE) {
-            mPresenter.onSpotifyLoginReceived(this, resultCode, intent);
+            mPresenter.onSpotifyLoginReceived(resultCode, intent);
         }
     }
 

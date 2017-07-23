@@ -2,17 +2,18 @@
 <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/playlist_scroller"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.benupenieks.beatsync.PlaylistSelection.PlaylistSelectionActivity"
     tools:showIn="@layout/activity_playlist_selection">
 
-    <TextView
-        android:id="@+id/playlist_list"
-        android:text="@string/large_text"
+    <RadioGroup
+        android:id="@+id/playlist_selector"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin" />
+        android:layout_height="wrap_content">
+
+    </RadioGroup>
 
 </android.support.v4.widget.NestedScrollView>
