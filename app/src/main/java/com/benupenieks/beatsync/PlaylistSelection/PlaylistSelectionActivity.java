@@ -1,5 +1,6 @@
 package com.benupenieks.beatsync.PlaylistSelection;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -10,6 +11,9 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 
+import com.benupenieks.beatsync.Fragments.MainPageFragment;
+import com.benupenieks.beatsync.Fragments.PlaylistSelectionFragment;
+import com.benupenieks.beatsync.MainActivity.MainActivity;
 import com.benupenieks.beatsync.Playlist;
 import com.benupenieks.beatsync.R;
 import com.benupenieks.beatsync.SpotifyController;
@@ -19,7 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PlaylistSelectionActivity extends AppCompatActivity implements PlaylistContract.View {
+public class PlaylistSelectionActivity extends AppCompatActivity implements PlaylistContract.View, PlaylistSelectionFragment.OnFragmentInteractionListener,
+        MainPageFragment.OnFragmentInteractionListener {
 
     private PlaylistPresenter mPresenter;
 
@@ -94,5 +99,10 @@ public class PlaylistSelectionActivity extends AppCompatActivity implements Play
         mPresenter.setSelectedPlaylists(selectedPlaylists);
         mPresenter.detatchView();
         super.onDestroy();
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 }
