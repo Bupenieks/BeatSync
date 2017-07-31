@@ -3,35 +3,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.benupenieks.beatsync.Fragments.PlaylistSelectionFragment">
+    tools:context="com.benupenieks.beatsync.Fragments.PlaylistSelectionFragment.PlaylistSelectionFragment">
 
-    <Button
-        android:id="@+id/toPlaylists"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Playlists"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="8dp" />
+    <ScrollView
+        android:id="@+id/playlist_scroller"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/test1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/toPlaylists"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
-
-    <Button
-        android:id="@+id/play"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:text="Play"
-        app:layout_constraintLeft_toRightOf="@+id/toPlaylists"
-        tools:layout_editor_absoluteY="8dp" />
-
+        <LinearLayout
+            android:id="@+id/playlist_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
 </FrameLayout>

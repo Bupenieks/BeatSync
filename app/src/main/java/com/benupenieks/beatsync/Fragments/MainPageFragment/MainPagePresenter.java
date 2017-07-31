@@ -1,21 +1,19 @@
-package com.benupenieks.beatsync.MainActivity;
+package com.benupenieks.beatsync.Fragments.MainPageFragment;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 
 /**
  * Created by Ben on 2017-07-22.
  */
 
-public class MainPresenter implements MainContract.Presenter{
-    private MainContract.View mView;
-    private MainContract.Interactor mInteractor = new MainInteractor();
+public class MainPagePresenter implements MainPageContract.Presenter{
+    private MainPageContract.View mView;
+    private MainPageContract.Interactor mInteractor = new MainPageInteractor();
 
-    public MainPresenter() {}
+    public MainPagePresenter() {}
 
     @Override
-    public void attachView(MainContract.View view) {
+    public void attachView(MainPageContract.View view) {
         mView = view;
     }
 

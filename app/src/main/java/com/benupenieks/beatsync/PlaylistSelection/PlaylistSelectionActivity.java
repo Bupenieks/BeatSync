@@ -11,9 +11,10 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 
-import com.benupenieks.beatsync.Fragments.MainPageFragment;
-import com.benupenieks.beatsync.Fragments.PlaylistSelectionFragment;
-import com.benupenieks.beatsync.MainActivity.MainActivity;
+import com.benupenieks.beatsync.Fragments.MainPageFragment.MainPageFragment;
+import com.benupenieks.beatsync.Fragments.PlaylistSelectionFragment.PlaylistSelectionPresenter;
+import com.benupenieks.beatsync.Fragments.PlaylistSelectionFragment.PlaylistSelectionContract;
+import com.benupenieks.beatsync.Fragments.PlaylistSelectionFragment.PlaylistSelectionFragment;
 import com.benupenieks.beatsync.Playlist;
 import com.benupenieks.beatsync.R;
 import com.benupenieks.beatsync.SpotifyController;
@@ -23,10 +24,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PlaylistSelectionActivity extends AppCompatActivity implements PlaylistContract.View, PlaylistSelectionFragment.OnFragmentInteractionListener,
+public class PlaylistSelectionActivity extends AppCompatActivity implements PlaylistSelectionContract.View, PlaylistSelectionFragment.OnFragmentInteractionListener,
         MainPageFragment.OnFragmentInteractionListener {
 
-    private PlaylistPresenter mPresenter;
+    private PlaylistSelectionPresenter mPresenter;
 
     private LinearLayout mPlaylistsContainer;
 
@@ -37,29 +38,12 @@ public class PlaylistSelectionActivity extends AppCompatActivity implements Play
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playlist_selection);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, SpotifyController.getInstance().getUserId(), Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        mPlaylistsContainer = (LinearLayout) findViewById(R.id.playlist_selector);
-
-        attachPresenter();
-        mPresenter.onInit();
     }
 
-    @Override
     public void attachPresenter() {
-        mPresenter = (PlaylistPresenter) getLastCustomNonConfigurationInstance();
+        mPresenter = (PlaylistSelectionPresenter) getLastCustomNonConfigurationInstance();
         if (mPresenter == null) {
-            mPresenter = new PlaylistPresenter();
+            mPresenter = new PlaylistSelectionPresenter();
         }
         mPresenter.attachView(this);
     }

@@ -1,14 +1,30 @@
-package com.benupenieks.beatsync.Fragments;
+package com.benupenieks.beatsync.Fragments.PlaylistSelectionFragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.benupenieks.beatsync.Playlist;
 import com.benupenieks.beatsync.R;
+import com.benupenieks.beatsync.SpotifyController;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -18,7 +34,13 @@ import com.benupenieks.beatsync.R;
  * Use the {@link PlaylistSelectionFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PlaylistSelectionFragment extends Fragment {
+public class PlaylistSelectionFragment extends Fragment
+        implements PlaylistSelectionContract.View {
+
+    private PlaylistSelectionPresenter mPresenter = new PlaylistSelectionPresenter();
+    private LinearLayout mPlaylistsContainer;
+    private Map<CheckBox, Playlist> mCheckBoxPlaylistMap = new HashMap<>();
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -59,21 +81,19 @@ public class PlaylistSelectionFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        mPresenter.attachView(this);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_playlist_selection, container, false);
-    }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+        View view = inflater.inflate(R.layout.fragment_playlist_selection, container, false);
+        mPlaylistsContainer = (LinearLayout) view.findViewById(R.id.playlist_container);
+
+        return view;
     }
+    
 
     @Override
     public void onAttach(Context context) {
@@ -105,5 +125,21 @@ public class PlaylistSelectionFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    @Override
+    public void displayPlaylists(List<Playlist> allPlaylists, List<Playlist> selectedPlaylists) {
+        // TODO: put size values in resources.
+        for (final Playlist playlist : allPlaylists) {
+            CheckBox cb = new CheckBox(getContext());
+            cb.setText(playlist.getName());
+            cb.setTextSize(TypedValue.COMPLEX_UNIT_SP, 25);
+            cb.setLines(2);
+            mCheckBoxPlaylistMap.put(cb, playlist);
+            mPlaylistsContainer.addView(cb);
+            if (selectedPlaylists.contains(playlist)) {
+                cb.setChecked(true);
+            }
+        }
     }
 }

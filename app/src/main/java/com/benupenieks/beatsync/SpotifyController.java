@@ -1,7 +1,9 @@
 package com.benupenieks.beatsync;
 
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Intent;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
@@ -10,6 +12,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.benupenieks.beatsync.Fragments.PlaylistSelectionFragment.PlaylistSelectionFragment;
+import com.benupenieks.beatsync.Fragments.PlaylistSelectionFragment.PlaylistSelectionPresenter;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -74,11 +78,6 @@ public class SpotifyController implements
         updateTrackList();
     }
 
-    public void updateUserInfo() {
-        updateUserId();
-        updatePlaylists();
-    }
-
     public void playTrack(Track track) {
         Log.d("SpotifyController", "Playing track: " + track.getName());
         mPlayer.playUri(null, track.getUri(), 0, 0);
@@ -94,11 +93,11 @@ public class SpotifyController implements
         AuthenticationClient.openLoginActivity(parentActivity, SPOTIFY_LOGIN_REQUEST_CODE, request);
     }
 
-    public void verifyLogIn(final Activity parentActivity, int resultCode, Intent intent) {
+    public void verifyLogIn(final PlaylistSelectionFragment playlistSelection, final Activity parentActivity, int resultCode, Intent intent) {
         AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
         if (response.getType() == AuthenticationResponse.Type.TOKEN) {
             mUserAccessToken = response.getAccessToken();
-            Config playerConfig = new Config(parentActivity, mUserAccessToken, CLIENT_ID);
+            final Config playerConfig = new Config(parentActivity, mUserAccessToken, CLIENT_ID);
             Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
                 @Override
                 public void onInitialized(SpotifyPlayer spotifyPlayer) {
@@ -106,7 +105,7 @@ public class SpotifyController implements
                     mPlayer.addConnectionStateCallback(SpotifyController.this);
                     mPlayer.addNotificationCallback(SpotifyController.this);
                     mRequestQueue = VolleyRequestQueue.getInstance(parentActivity).getRequestQueue();
-                    spcInstance.updateUserInfo();
+                    spcInstance.updateUserInfo(playlistSelection);
                 }
 
                 @Override
@@ -121,13 +120,21 @@ public class SpotifyController implements
     @Override
     public void onLoggedIn() {
         Log.d("SpotifyController", "User logged in");
+        mSelectedPlaylists.clear();
+        mPlaylists.clear();
+    }
+
+    public void updateUserInfo(PlaylistSelectionFragment listener) {
+        updateUserId();
+        updatePlaylists(listener);
     }
 
     @Override
     public void onLoggedOut() {
         Log.d("SpotifyController", "Logged out");
         mUserId = null;
-        mPlaylists = null;
+        mPlaylists.clear();
+        mSelectedPlaylists.clear();
     }
 
     @Override
@@ -202,7 +209,7 @@ public class SpotifyController implements
         JSONApiGetRequest(requestUrl, responseListener, errorListener);
     }
 
-    private void updatePlaylists() {
+    private void updatePlaylists(final PlaylistSelectionFragment listener) {
         final String requestUrl = "https://api.spotify.com/v1/me/playlists";
         Response.Listener responseListener = new Response.Listener<JSONObject>() {
             @Override
@@ -227,6 +234,7 @@ public class SpotifyController implements
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                listener.displayPlaylists(mPlaylists, mSelectedPlaylists);
             }
         };
 

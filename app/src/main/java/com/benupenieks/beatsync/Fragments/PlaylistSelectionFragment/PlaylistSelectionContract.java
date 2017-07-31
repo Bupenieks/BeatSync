@@ -1,4 +1,4 @@
-package com.benupenieks.beatsync.PlaylistSelection;
+package com.benupenieks.beatsync.Fragments.PlaylistSelectionFragment;
 
 import com.benupenieks.beatsync.Playlist;
 
@@ -8,15 +8,13 @@ import java.util.List;
  * Created by Ben on 2017-07-22.
  */
 
-public interface PlaylistContract {
+public interface PlaylistSelectionContract {
     interface View {
-        void attachPresenter();
-
         void displayPlaylists(List<Playlist> allPlaylists, List<Playlist> selectedPlaylists);
     }
 
     interface Presenter {
-        void attachView(PlaylistContract.View view);
+        void attachView(PlaylistSelectionContract.View view);
 
         void detatchView();
 

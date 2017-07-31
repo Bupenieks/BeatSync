@@ -1,4 +1,4 @@
-package com.benupenieks.beatsync.PlaylistSelection;
+package com.benupenieks.beatsync.Fragments.PlaylistSelectionFragment;
 
 import com.benupenieks.beatsync.Playlist;
 
@@ -8,15 +8,15 @@ import java.util.List;
  * Created by Ben on 2017-07-22.
  */
 
-public class PlaylistPresenter implements
-        PlaylistContract.Presenter, PlaylistContract.Interactor.playlistConfigListener {
-    private PlaylistContract.View mView;
-    private PlaylistContract.Interactor mInteractor = new PlaylistInteractor();
+public class PlaylistSelectionPresenter implements
+        PlaylistSelectionContract.Presenter, PlaylistSelectionContract.Interactor.playlistConfigListener {
+    private PlaylistSelectionContract.View mView;
+    private PlaylistSelectionContract.Interactor mInteractor = new PlaylistSelectionInteractor();
 
-    public PlaylistPresenter() {}
+    public PlaylistSelectionPresenter() {}
 
     @Override
-    public void attachView(PlaylistContract.View view) {
+    public void attachView(PlaylistSelectionContract.View view) {
         mView = view;
     }
 

@@ -8,32 +8,30 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
 
-import com.benupenieks.beatsync.Fragments.MainPageFragment;
-import com.benupenieks.beatsync.Fragments.PlaylistSelectionFragment;
-import com.benupenieks.beatsync.PlaylistSelection.PlaylistSelectionActivity;
+import com.benupenieks.beatsync.Fragments.MainPageFragment.MainPageContract;
+import com.benupenieks.beatsync.Fragments.MainPageFragment.MainPageFragment;
+import com.benupenieks.beatsync.Fragments.MainPageFragment.MainPagePresenter;
+import com.benupenieks.beatsync.Fragments.PlaylistSelectionFragment.PlaylistSelectionFragment;
 import com.benupenieks.beatsync.R;
 import com.benupenieks.beatsync.SpotifyController;
-import com.benupenieks.beatsync.Track;
 
-public class MainActivity extends FragmentActivity implements MainContract.View,
-        MainPageFragment.OnFragmentInteractionListener, PlaylistSelectionFragment.OnFragmentInteractionListener{
-
-    private MainPresenter mPresenter;
+public class MainActivity extends AppCompatActivity implements MainPageContract.View,
+        MainPageFragment.OnFragmentInteractionListener,
+        PlaylistSelectionFragment.OnFragmentInteractionListener{
 
     ViewPager mViewPager;
     PagerAdapter mPagerAdapter;
+
+    Fragment mMainPage = new MainPageFragment();
+    Fragment mPlaylistSelection = new PlaylistSelectionFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        attachPresenter();
-
-        mPresenter.onSpotifyLogIn();
 
         mPagerAdapter = new PagerAdapter(getSupportFragmentManager());
 
@@ -42,34 +40,20 @@ public class MainActivity extends FragmentActivity implements MainContract.View,
 
     }
     // TODO: Abstract base presenter class?
-    @Override
-    public void attachPresenter() {
-        mPresenter = (MainPresenter) getLastCustomNonConfigurationInstance();
-        if (mPresenter == null) {
-            mPresenter = new MainPresenter();
-        }
-        mPresenter.attachView(this);
-    }
-
-
-    @Override
-    public Object onRetainCustomNonConfigurationInstance() {
-        return mPresenter;
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
         switch (requestCode) {
             case SpotifyController.SPOTIFY_LOGIN_REQUEST_CODE:
-                mPresenter.onSpotifyLoginReceived(resultCode, intent);
+                SpotifyController.getInstance().verifyLogIn(
+                        (PlaylistSelectionFragment) mPlaylistSelection, MainActivity.this, resultCode, intent);
                 break;
         }
     }
 
     @Override
     protected void onDestroy() {
-        mPresenter.detatchView();
         super.onDestroy();
     }
 
@@ -87,10 +71,10 @@ public class MainActivity extends FragmentActivity implements MainContract.View,
         public Fragment getItem(int i) {
             switch (i) {
                 case 0:
-                    return new MainPageFragment();
+                    return mMainPage;
                 case 1:
                 default:
-                    return new PlaylistSelectionFragment();
+                    return mPlaylistSelection;
             }
         }
 

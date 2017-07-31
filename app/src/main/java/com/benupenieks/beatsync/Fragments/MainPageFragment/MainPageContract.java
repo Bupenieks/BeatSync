@@ -1,4 +1,4 @@
-package com.benupenieks.beatsync.MainActivity;
+package com.benupenieks.beatsync.Fragments.MainPageFragment;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,9 +8,8 @@ import android.content.Intent;
  * Created by Ben on 2017-07-22.
  */
 
-public interface MainContract {
+public interface MainPageContract {
     interface View {
-        void attachPresenter();
     }
 
     interface Presenter {

@@ -1,14 +1,17 @@
-package com.benupenieks.beatsync.Fragments;
+package com.benupenieks.beatsync.Fragments.MainPageFragment;
 
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.benupenieks.beatsync.MainActivity.MainActivity;
 import com.benupenieks.beatsync.R;
+import com.benupenieks.beatsync.SpotifyController;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -18,7 +21,10 @@ import com.benupenieks.beatsync.R;
  * Use the {@link MainPageFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MainPageFragment extends Fragment {
+public class MainPageFragment extends Fragment implements MainPageContract.View {
+
+    private MainPagePresenter mPresenter = new MainPagePresenter();
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -27,6 +33,8 @@ public class MainPageFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -59,20 +67,21 @@ public class MainPageFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        mPresenter.attachView(this);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.activity_playlist_selection, container, false);
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+        View view = inflater.inflate(R.layout.fragment_main_page, container, false);
+        view.findViewById(R.id.spotify_login).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SpotifyController.getInstance().logIn(getActivity());
+            }
+        });
+        return view;
     }
 
     @Override
@@ -88,6 +97,7 @@ public class MainPageFragment extends Fragment {
 
     @Override
     public void onDetach() {
+        mPresenter.detatchView();
         super.onDetach();
         mListener = null;
     }
