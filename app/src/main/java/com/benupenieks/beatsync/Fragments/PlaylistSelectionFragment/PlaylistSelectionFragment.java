@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -131,10 +132,20 @@ public class PlaylistSelectionFragment extends Fragment
     public void displayPlaylists(List<Playlist> allPlaylists, List<Playlist> selectedPlaylists) {
         // TODO: put size values in resources.
         for (final Playlist playlist : allPlaylists) {
-            CheckBox cb = new CheckBox(getContext());
+            final CheckBox cb = new CheckBox(getContext());
             cb.setText(playlist.getName());
             cb.setTextSize(TypedValue.COMPLEX_UNIT_SP, 25);
             cb.setLines(2);
+            cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    if (cb.isChecked()) {
+                        mPresenter.onPlaylistSelected(mCheckBoxPlaylistMap.get(cb));
+                    } else {
+                        mPresenter.onPlaylistDeselected(mCheckBoxPlaylistMap.get(cb));
+                    }
+                }
+            });
             mCheckBoxPlaylistMap.put(cb, playlist);
             mPlaylistsContainer.addView(cb);
             if (selectedPlaylists.contains(playlist)) {

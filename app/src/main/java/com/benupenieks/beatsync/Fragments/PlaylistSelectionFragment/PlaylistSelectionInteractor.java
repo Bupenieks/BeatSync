@@ -23,6 +23,16 @@ public class PlaylistSelectionInteractor implements PlaylistSelectionContract.In
 
     @Override
     public void updateSelectedPlaylists(List<Playlist> selectedPlaylists) {
-        mSpotify.setSelectedPlaylists(selectedPlaylists);
+        //mSpotify.setSelectedPlaylists(selectedPlaylists);
+    }
+
+    @Override
+    public void addNewSelectedPlaylist(Playlist playlist) {
+        mSpotify.addNewSelectedPlaylist(playlist);
+    }
+
+    @Override
+    public void removeSelectedPlaylist(Playlist playlist) {
+        mSpotify.removeSelectedPlaylist(playlist);
     }
 }

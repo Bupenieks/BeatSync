@@ -27,4 +27,9 @@ public class MainPageInteractor implements MainPageContract.Interactor {
     public void verifySpotifyLogin(MainPageContract.View view, int resultCode, Intent intent) {
         mSpotify.verifyLogIn((PlaylistSelectionFragment) view, (Activity) view, resultCode, intent);
     }
+
+    @Override
+    public void playRandomTrack() {
+        mSpotify.playTrack(mSpotify.getRandomTrack());
+    }
 }

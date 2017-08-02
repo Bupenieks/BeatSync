@@ -32,7 +32,6 @@ public class Track {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        getTrackFeatures();
     }
 
     public String getName() {
@@ -46,6 +45,8 @@ public class Track {
     public int getBPM() {
         return mTrackBPM;
     }
+
+    public String getId() { return mTrackId; }
 
     public Object getTrackFeature(String key) {
         try {
@@ -89,5 +90,9 @@ public class Track {
 
         SpotifyController.getInstance().JSONApiGetRequest(requestUrl, responseListener,
                 errorListener);
+    }
+
+    public void setTrackFeatures(JSONObject features) {
+        mTrackFeatures = features;
     }
 }

@@ -43,4 +43,15 @@ public class PlaylistSelectionPresenter implements
     public void setSelectedPlaylists(List<Playlist> selectedPlaylists) {
         mInteractor.updateSelectedPlaylists(selectedPlaylists);
     }
+
+    @Override
+    public void onPlaylistSelected(Playlist playlist) {
+        mInteractor.addNewSelectedPlaylist(playlist);
+    }
+
+    @Override
+    public void onPlaylistDeselected(Playlist playlist) {
+        mInteractor.removeSelectedPlaylist(playlist);
+    }
+
 }

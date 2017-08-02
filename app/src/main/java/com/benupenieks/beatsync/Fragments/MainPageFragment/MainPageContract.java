@@ -20,11 +20,15 @@ public interface MainPageContract {
         void onSpotifyLogIn();
 
         void onSpotifyLoginReceived(int resultCode, Intent intent);
+
+        void onPlayTrack();
     }
 
     interface Interactor{
         void spotifyLogIn(View view);
 
         void verifySpotifyLogin(View view, int resultCode, Intent intent);
+
+        void playRandomTrack();
     }
 }

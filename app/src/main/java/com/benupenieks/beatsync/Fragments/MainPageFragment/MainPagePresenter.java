@@ -31,4 +31,10 @@ public class MainPagePresenter implements MainPageContract.Presenter{
     public void onSpotifyLoginReceived(int resultCode, Intent intent) {
         mInteractor.verifySpotifyLogin(mView, resultCode, intent);
     }
+
+    @Override
+    public void onPlayTrack() {
+        mInteractor.playRandomTrack();
+    }
 }
+

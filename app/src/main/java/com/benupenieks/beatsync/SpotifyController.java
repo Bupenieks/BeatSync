@@ -73,9 +73,12 @@ public class SpotifyController implements
         return mUserId;
     }
 
-    public void setSelectedPlaylists(List<Playlist> selectedPlaylists) {
-        mSelectedPlaylists = selectedPlaylists;
-        updateTrackList();
+    public void addNewSelectedPlaylist(Playlist playlist) {
+        mSelectedPlaylists.add(playlist);
+    }
+
+    public void removeSelectedPlaylist(Playlist playlist) {
+        mSelectedPlaylists.remove(playlist);
     }
 
     public void playTrack(Track track) {
@@ -120,8 +123,6 @@ public class SpotifyController implements
     @Override
     public void onLoggedIn() {
         Log.d("SpotifyController", "User logged in");
-        mSelectedPlaylists.clear();
-        mPlaylists.clear();
     }
 
     public void updateUserInfo(PlaylistSelectionFragment listener) {
@@ -179,7 +180,8 @@ public class SpotifyController implements
     // TODO: Multiple playlist sle
     public Track getRandomTrack() {
         Random rand = new Random();
-        int index = rand.nextInt(mSelectedPlaylists.size());
+        int numPlaylists = mSelectedPlaylists.size();
+        int index = numPlaylists == 0 ? 0 : rand.nextInt(numPlaylists);
         return mSelectedPlaylists.get(index).getRandomTrack();
     }
 
@@ -210,7 +212,11 @@ public class SpotifyController implements
     }
 
     private void updatePlaylists(final PlaylistSelectionFragment listener) {
-        final String requestUrl = "https://api.spotify.com/v1/me/playlists";
+        updatePlaylists("https://api.spotify.com/v1/me/playlists", listener);
+    }
+
+    private void updatePlaylists(final String requestUrl, final PlaylistSelectionFragment listener) {
+
         Response.Listener responseListener = new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -230,11 +236,16 @@ public class SpotifyController implements
                         mPlaylists.add(playlist);
                     }
                     nextPage = response.getString("next");
-                    // TODO: Take care of pagination for lots of playlists
+                    if (!nextPage.equals("null")) {
+                        Log.d("mResponseQueue", nextPage);
+                        updatePlaylists(nextPage, listener);
+                        return;
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 listener.displayPlaylists(mPlaylists, mSelectedPlaylists);
+                updateTrackList();
             }
         };
 
@@ -249,39 +260,50 @@ public class SpotifyController implements
     }
 
     public void updateTrackList() {
-
-        for (final Playlist playlist : mSelectedPlaylists) {
-
+        for (final Playlist playlist : mPlaylists) {
             String requestUrl = "https://api.spotify.com/v1/users/" + mUserId + "/playlists/"
                     + playlist.getId() + "/tracks";
-
-            Response.Listener<JSONObject> responseListener = new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    Log.d("mResponseQueue", "Response Received");
-                    String nextPage;
-                    try {
-                        JSONArray items = response.getJSONArray("items");
-                        for (int i = 0; i < items.length(); i++) {
-                            playlist.addTrack(items.getJSONObject(i).getJSONObject("track"));
-                        }
-                        // TODO: Take care of pagination for lots of tracks
-                        nextPage = response.getString("next");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            };
-
-            Response.ErrorListener errorListener = new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.d("SpotifyController", "updateTrackList failed");
-                }
-            };
-
-            JSONApiGetRequest(requestUrl, responseListener, errorListener);
+            updateTrackList(requestUrl, playlist);
         }
+    }
+
+    public void updateTrackList(String requestUrl, final Playlist playlist) {
+
+        Response.Listener<JSONObject> responseListener = new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.d("mResponseQueue", "Response Received");
+                String nextPage;
+                try {
+                    JSONArray items = response.getJSONArray("items");
+                    for (int i = 0; i < items.length(); i++) {
+                        playlist.addTrack(items.getJSONObject(i).getJSONObject("track"));
+                    }
+
+                    nextPage = response.getString("next");
+                    if (!nextPage.equals("null")) {
+                        updateTrackList(nextPage, playlist);
+                        return;
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                playlist.populateTrackFeatures();
+
+            }
+        };
+
+        Response.ErrorListener errorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("SpotifyController", "updateTrackList failed");
+            }
+        };
+
+        JSONApiGetRequest(requestUrl, responseListener, errorListener);
+
     }
 
     public void JSONApiGetRequest(String requestUrl, Response.Listener listener,

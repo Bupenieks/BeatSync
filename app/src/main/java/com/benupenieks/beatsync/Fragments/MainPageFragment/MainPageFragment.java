@@ -81,6 +81,14 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
                 SpotifyController.getInstance().logIn(getActivity());
             }
         });
+
+        view.findViewById(R.id.play).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mPresenter.onPlayTrack();
+            }
+        });
+
         return view;
     }
 

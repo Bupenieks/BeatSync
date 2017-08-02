@@ -1,9 +1,18 @@
 package com.benupenieks.beatsync;
 
+import android.util.Log;
+
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -68,5 +77,57 @@ public class Playlist {
                 ", mUri='" + mUri + '\'' +
                 ", mNumTracks=" + mNumTracks +
                 '}';
+    }
+
+    public void populateTrackFeatures() {
+        String trackIds = "";
+        int trackCount = 0;
+        final Map<String, Track> idToTrackMap = new HashMap<>();
+        for (Track track : mTrackList) {
+            final String id = track.getId();
+            trackIds += trackIds.equals("") ? id : ',' + id;
+            idToTrackMap.put(id, track);
+            trackCount++;
+
+            if (trackCount == 100) { // Max number of tracks for one get request
+                trackCount = 0;
+                trackFeatureGetRequest(trackIds, idToTrackMap);
+                trackIds = "";
+            }
+        }
+        if (!trackIds.equals("")) {
+            trackFeatureGetRequest(trackIds, idToTrackMap);
+        }
+    }
+
+
+    private void trackFeatureGetRequest(String trackIds, final Map<String, Track> trackMap) {
+        String requestUrl = "https://api.spotify.com/v1/audio-features/?ids=" + trackIds;
+
+        Response.Listener<JSONObject> responseListener = new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.d("mResponseQueue", "Response Received");
+                try {
+                    JSONArray featureList = response.getJSONArray("audio_features");
+                    for (int i = 0; i < featureList.length(); i++) {
+                        JSONObject features = featureList.getJSONObject(i);
+                        trackMap.get(features.getString("id")).setTrackFeatures(features);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        Response.ErrorListener errorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("SpotifyController", "updateTrackList failed");
+            }
+        };
+
+        SpotifyController.getInstance().JSONApiGetRequest
+                (requestUrl, responseListener, errorListener);
     }
 }

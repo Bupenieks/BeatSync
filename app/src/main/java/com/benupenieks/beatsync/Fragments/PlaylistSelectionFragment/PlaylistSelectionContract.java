@@ -22,6 +22,10 @@ public interface PlaylistSelectionContract {
 
         void setSelectedPlaylists(List<Playlist> selectedPlaylists);
 
+        void onPlaylistSelected(Playlist playlist);
+
+        void onPlaylistDeselected(Playlist playlist);
+
     }
 
     interface Interactor {
@@ -35,5 +39,9 @@ public interface PlaylistSelectionContract {
         void initPlaylists(playlistConfigListener listener);
 
         void updateSelectedPlaylists(List<Playlist> selectedPlaylists);
+
+        void addNewSelectedPlaylist(Playlist playlist);
+
+        void removeSelectedPlaylist(Playlist playlist);
     }
 }
