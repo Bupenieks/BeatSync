@@ -8,6 +8,7 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import com.benupenieks.beatsync.MainActivity.MainActivity;
 import com.benupenieks.beatsync.R;
@@ -25,6 +26,11 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
 
     private MainPagePresenter mPresenter = new MainPagePresenter();
 
+    private EditText mBpmBox;
+
+    // FIXME
+    private static final int MAX_BPM = 300;
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -34,7 +40,7 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
     private String mParam1;
     private String mParam2;
 
-
+    private int mCurrentBpm = 0;
 
     private OnFragmentInteractionListener mListener;
 
@@ -82,12 +88,25 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
             }
         });
 
+        mBpmBox = (EditText) view.findViewById(R.id.bpm_box);
+
         view.findViewById(R.id.play).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mPresenter.onPlayTrack();
+                int bpm = Integer.parseInt(mBpmBox.getText().toString());
+                if (!mBpmBox.equals("") && bpm != mCurrentBpm) {
+                    mCurrentBpm = bpm;
+                    mPresenter.onUpdateBpm(bpm);
+                }
+
+                if (mCurrentBpm > 0 && mCurrentBpm < MAX_BPM) {
+                    mPresenter.onPlayTrack();
+                } else {
+                    // TODO: ALERT INVALID BPM
+                }
             }
         });
+
 
         return view;
     }

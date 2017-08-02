@@ -36,5 +36,9 @@ public class MainPagePresenter implements MainPageContract.Presenter{
     public void onPlayTrack() {
         mInteractor.playRandomTrack();
     }
+
+    public void onUpdateBpm(int bpm) {
+        mInteractor.updateValidTracks(bpm);
+    }
 }
 

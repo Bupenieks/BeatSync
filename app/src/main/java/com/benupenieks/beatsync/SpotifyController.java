@@ -56,10 +56,14 @@ public class SpotifyController implements
 
     private List<Playlist> mPlaylists = new ArrayList<>();
     private List<Playlist> mSelectedPlaylists = new ArrayList<>();
-    private List<JSONObject> mTrackList = new ArrayList<>();
+    private List<Track> mValidTracks = new ArrayList<>();
+    private Map<Integer, ArrayList<Track> > mBPMToTrackMap = new HashMap<>();
 
     private RequestQueue mRequestQueue;
     private Player mPlayer;
+
+
+
 
     public List<Playlist> getAllPlaylists() {
         return Collections.unmodifiableList(mPlaylists);
@@ -67,6 +71,10 @@ public class SpotifyController implements
 
     public List<Playlist> getSelectedPlaylists() {
         return mSelectedPlaylists;
+    }
+
+    public Map<Integer, ArrayList<Track>> getBpmTrackMap() {
+        return Collections.unmodifiableMap(mBPMToTrackMap);
     }
 
     public String getUserId() {
@@ -82,7 +90,12 @@ public class SpotifyController implements
     }
 
     public void playTrack(Track track) {
-        Log.d("SpotifyController", "Playing track: " + track.getName());
+
+        int bpm = 99;
+        track = mBPMToTrackMap.get(bpm).get(0);
+
+        Log.d("SpotifyController", "Playing track: " + track.getName()
+                + " BPM : " + track.getBPM());
         mPlayer.playUri(null, track.getUri(), 0, 0);
     }
 
@@ -290,7 +303,8 @@ public class SpotifyController implements
                     e.printStackTrace();
                 }
 
-                playlist.populateTrackFeatures();
+                mBPMToTrackMap.clear();
+                playlist.populateTrackFeatures(mBPMToTrackMap);
 
             }
         };

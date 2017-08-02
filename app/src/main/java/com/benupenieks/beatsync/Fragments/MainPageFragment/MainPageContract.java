@@ -22,6 +22,8 @@ public interface MainPageContract {
         void onSpotifyLoginReceived(int resultCode, Intent intent);
 
         void onPlayTrack();
+
+        void onUpdateBpm(int bpm);
     }
 
     interface Interactor{
@@ -30,5 +32,7 @@ public interface MainPageContract {
         void verifySpotifyLogin(View view, int resultCode, Intent intent);
 
         void playRandomTrack();
+
+        void updateValidTracks(int bpm);
     }
 }

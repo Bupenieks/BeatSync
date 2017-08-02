@@ -94,5 +94,10 @@ public class Track {
 
     public void setTrackFeatures(JSONObject features) {
         mTrackFeatures = features;
+        try {
+            mTrackBPM = mTrackFeatures.getInt("tempo");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }

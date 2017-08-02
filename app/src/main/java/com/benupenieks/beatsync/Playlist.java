@@ -54,6 +54,10 @@ public class Playlist {
 
     public String getId() { return mPlaylistId;}
 
+    public List<Track> getTrackList() {
+        return mTrackList;
+    }
+
     public boolean isEmpty() {
         return mTrackList.isEmpty();
     }
@@ -79,7 +83,7 @@ public class Playlist {
                 '}';
     }
 
-    public void populateTrackFeatures() {
+    public void populateTrackFeatures(Map<Integer, ArrayList<Track> > BPMToTrackMap) {
         String trackIds = "";
         int trackCount = 0;
         final Map<String, Track> idToTrackMap = new HashMap<>();
@@ -91,17 +95,17 @@ public class Playlist {
 
             if (trackCount == 100) { // Max number of tracks for one get request
                 trackCount = 0;
-                trackFeatureGetRequest(trackIds, idToTrackMap);
+                trackFeatureGetRequest(trackIds, idToTrackMap, BPMToTrackMap);
                 trackIds = "";
             }
         }
         if (!trackIds.equals("")) {
-            trackFeatureGetRequest(trackIds, idToTrackMap);
+            trackFeatureGetRequest(trackIds, idToTrackMap, BPMToTrackMap);
         }
     }
 
 
-    private void trackFeatureGetRequest(String trackIds, final Map<String, Track> trackMap) {
+    private void trackFeatureGetRequest(String trackIds, final Map<String, Track> trackMap, final Map<Integer, ArrayList<Track> > BPMToTrackMap) {
         String requestUrl = "https://api.spotify.com/v1/audio-features/?ids=" + trackIds;
 
         Response.Listener<JSONObject> responseListener = new Response.Listener<JSONObject>() {
@@ -112,7 +116,15 @@ public class Playlist {
                     JSONArray featureList = response.getJSONArray("audio_features");
                     for (int i = 0; i < featureList.length(); i++) {
                         JSONObject features = featureList.getJSONObject(i);
-                        trackMap.get(features.getString("id")).setTrackFeatures(features);
+                        Track track = trackMap.get(features.getString("id"));
+                        track.setTrackFeatures(features);
+
+                        ArrayList<Track> trackList = BPMToTrackMap.get(track.getBPM());
+                        if (trackList == null) {
+                            trackList = new ArrayList<>();
+                            BPMToTrackMap.put(track.getBPM(), trackList);
+                        }
+                        trackList.add(track);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
