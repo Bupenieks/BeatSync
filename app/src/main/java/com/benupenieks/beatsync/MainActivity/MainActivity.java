@@ -53,6 +53,9 @@ public class MainActivity extends AppCompatActivity implements MainPageContract.
     }
 
     @Override
+    public void displayErrorToast(String errorMsg) {}
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
     }

@@ -10,6 +10,7 @@ import android.content.Intent;
 
 public interface MainPageContract {
     interface View {
+        void displayErrorToast(String errorMsg);
     }
 
     interface Presenter {
@@ -24,6 +25,8 @@ public interface MainPageContract {
         void onPlayTrack();
 
         void onUpdateBpm(int bpm);
+
+        void onDisplayErrorToast(String errorMsg);
     }
 
     interface Interactor{
@@ -31,7 +34,7 @@ public interface MainPageContract {
 
         void verifySpotifyLogin(View view, int resultCode, Intent intent);
 
-        void playRandomTrack();
+        void playRandomTrack(MainPageContract.Presenter listener);
 
         void updateValidTracks(int bpm);
     }

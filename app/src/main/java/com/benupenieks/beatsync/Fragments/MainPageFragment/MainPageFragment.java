@@ -5,11 +5,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.benupenieks.beatsync.MainActivity.MainActivity;
 import com.benupenieks.beatsync.R;
@@ -94,17 +96,20 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
         view.findViewById(R.id.play).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int bpm = Integer.parseInt(mBpmBox.getText().toString());
-                Log.d("TEST", "" + bpm);
-                if (!mBpmBox.equals("") && bpm != mCurrentBpm) {
-                    mCurrentBpm = bpm;
-                    mPresenter.onUpdateBpm(bpm);
+                String bpmContents = mBpmBox.getText().toString();
+                if (!TextUtils.isEmpty(bpmContents)) {
+                    int bpm = Integer.parseInt(bpmContents);
+                    // Todo detect playlist change
+                    if (bpm != mCurrentBpm && bpm > 0) {
+                        mCurrentBpm = bpm;
+                        mPresenter.onUpdateBpm(bpm);
+                    }
                 }
 
                 if (mCurrentBpm > 0 && mCurrentBpm < MAX_BPM) {
                     mPresenter.onPlayTrack();
                 } else {
-                    // TODO: ALERT INVALID BPM
+                    displayErrorToast("Enter a valid BPM");
                 }
             }
         });
@@ -144,5 +149,9 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void displayErrorToast(String errorMsg) {
+        Toast.makeText(getContext(), errorMsg, Toast.LENGTH_SHORT).show();
     }
 }

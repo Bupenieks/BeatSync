@@ -34,11 +34,16 @@ public class MainPagePresenter implements MainPageContract.Presenter{
 
     @Override
     public void onPlayTrack() {
-        mInteractor.playRandomTrack();
+        mInteractor.playRandomTrack(this);
     }
 
     public void onUpdateBpm(int bpm) {
         mInteractor.updateValidTracks(bpm);
+    }
+
+    @Override
+    public void onDisplayErrorToast(String errorMsg) {
+        mView.displayErrorToast(errorMsg);
     }
 }
 

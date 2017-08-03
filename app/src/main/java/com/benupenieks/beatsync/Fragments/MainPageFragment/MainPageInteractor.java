@@ -2,6 +2,7 @@ package com.benupenieks.beatsync.Fragments.MainPageFragment;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.widget.Toast;
 
 
 import com.benupenieks.beatsync.Fragments.PlaylistSelectionFragment.PlaylistSelectionFragment;
@@ -15,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import static java.security.AccessController.getContext;
+
 /**
  * Created by Ben on 2017-07-22.
  */
@@ -27,6 +30,7 @@ public class MainPageInteractor implements MainPageContract.Interactor {
     private static final int MAX_BPM = 300;
 
     private List<Track> mValidTracks = new ArrayList<>();
+    private int mBufferRange = 3;
 
     @Override
     public void spotifyLogIn(MainPageContract.View view) {
@@ -41,19 +45,28 @@ public class MainPageInteractor implements MainPageContract.Interactor {
     }
 
     @Override
-    public void playRandomTrack() {
+    public void playRandomTrack(MainPageContract.Presenter listener) {
         Random rand = new Random();
-        int index = rand.nextInt(mValidTracks.size());
-        mSpotify.playTrack(mValidTracks.get(index));
+        int size = mValidTracks.size();
+        if (size > 0) {
+            int index = rand.nextInt(size);
+            mSpotify.playTrack(mValidTracks.get(index));
+        } else {
+            listener.onDisplayErrorToast("No songs sync with that BPM.");
+        }
     }
 
     @Override
     public void updateValidTracks(int bpm) {
+        mValidTracks.clear();
         Map<Integer, ArrayList<Track>> BpmTrackMap = mSpotify.getBpmTrackMap();
         for (int i = bpm; i < MAX_BPM; i*=2) {
-            ArrayList<Track> tracks = BpmTrackMap.get(i);
-            if (tracks != null) {
-                mValidTracks.addAll(tracks);
+            for (int j = i - mBufferRange; j < i + mBufferRange; j++) {
+                if (j <= 0) { continue; }
+                ArrayList<Track> tracks = BpmTrackMap.get(j);
+                if (tracks != null) {
+                    mValidTracks.addAll(tracks);
+                }
             }
         }
     }
