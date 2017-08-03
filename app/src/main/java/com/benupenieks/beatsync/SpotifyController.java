@@ -90,10 +90,6 @@ public class SpotifyController implements
     }
 
     public void playTrack(Track track) {
-
-        int bpm = 99;
-        track = mBPMToTrackMap.get(bpm).get(0);
-
         Log.d("SpotifyController", "Playing track: " + track.getName()
                 + " BPM : " + track.getBPM());
         mPlayer.playUri(null, track.getUri(), 0, 0);

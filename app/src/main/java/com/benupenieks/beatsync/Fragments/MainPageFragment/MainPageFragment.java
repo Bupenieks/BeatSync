@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,6 +95,7 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
             @Override
             public void onClick(View view) {
                 int bpm = Integer.parseInt(mBpmBox.getText().toString());
+                Log.d("TEST", "" + bpm);
                 if (!mBpmBox.equals("") && bpm != mCurrentBpm) {
                     mCurrentBpm = bpm;
                     mPresenter.onUpdateBpm(bpm);
