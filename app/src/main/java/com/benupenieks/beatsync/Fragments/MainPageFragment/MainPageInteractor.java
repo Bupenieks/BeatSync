@@ -30,7 +30,7 @@ public class MainPageInteractor implements MainPageContract.Interactor {
     private static final int MAX_BPM = 300;
 
     private List<Track> mValidTracks = new ArrayList<>();
-    private int mBufferRange = 3;
+    private int mBufferRange = 0;
 
     @Override
     public void spotifyLogIn(MainPageContract.View view) {
@@ -60,8 +60,8 @@ public class MainPageInteractor implements MainPageContract.Interactor {
     public void updateValidTracks(int bpm) {
         mValidTracks.clear();
         Map<Integer, ArrayList<Track>> BpmTrackMap = mSpotify.getBpmTrackMap();
-        for (int i = bpm; i < MAX_BPM; i*=2) {
-            for (int j = i - mBufferRange; j < i + mBufferRange; j++) {
+        for (int i = bpm; i < MAX_BPM; i+=i) {
+            for (int j = i - mBufferRange; j < i + mBufferRange || j == i; j++) {
                 if (j <= 0) { continue; }
                 ArrayList<Track> tracks = BpmTrackMap.get(j);
                 if (tracks != null) {
