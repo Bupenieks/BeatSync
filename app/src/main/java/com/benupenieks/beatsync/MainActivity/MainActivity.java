@@ -16,7 +16,7 @@ import com.benupenieks.beatsync.Fragments.PlaylistSelectionFragment.PlaylistSele
 import com.benupenieks.beatsync.R;
 import com.benupenieks.beatsync.SpotifyController;
 
-public class MainActivity extends AppCompatActivity implements MainPageContract.View,
+public class MainActivity extends AppCompatActivity implements
         MainContract.View,
         MainPageFragment.OnFragmentInteractionListener,
         PlaylistSelectionFragment.OnFragmentInteractionListener {
@@ -71,8 +71,6 @@ public class MainActivity extends AppCompatActivity implements MainPageContract.
         }
     }
 
-    @Override
-    public void displayErrorToast(String errorMsg) {}
 
     @Override
     protected void onDestroy() {

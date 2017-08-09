@@ -6,8 +6,12 @@ import android.widget.Toast;
 
 
 import com.benupenieks.beatsync.Fragments.PlaylistSelectionFragment.PlaylistSelectionFragment;
+import com.benupenieks.beatsync.MainActivity.AccelerometerInteractor;
 import com.benupenieks.beatsync.SpotifyController;
 import com.benupenieks.beatsync.Track;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -23,14 +27,28 @@ import static java.security.AccessController.getContext;
  */
 
 public class MainPageInteractor implements MainPageContract.Interactor {
+    private MainPageContract.Presenter mListener;
+
     private SpotifyController mSpotify = SpotifyController.getInstance();
 
-    public MainPageInteractor() {}
+    public MainPageInteractor(MainPageContract.Presenter listener) {
+        mListener = listener;
+    }
 
     private static final int MAX_BPM = 300;
 
     private List<Track> mValidTracks = new ArrayList<>();
     private int mBufferRange = 0;
+
+    @Override
+    public void start() {
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void stop() {
+        EventBus.getDefault().unregister(this);
+    }
 
     @Override
     public void spotifyLogIn(MainPageContract.View view) {
@@ -69,5 +87,10 @@ public class MainPageInteractor implements MainPageContract.Interactor {
                 }
             }
         }
+    }
+
+    @Subscribe
+    public void onAccelerometerDataEvent(AccelerometerInteractor.AccelerometerDataEvent event) {
+        mListener.updateAccelerometerGraph(((float) event.mTimeStamp) / 1000000.f, event.mMovingAverage);
     }
 }

@@ -1,5 +1,7 @@
 package com.benupenieks.beatsync.MainActivity;
 
+import android.support.v4.app.Fragment;
+
 /**
  * Created by Ben on 2017-08-05.
  */

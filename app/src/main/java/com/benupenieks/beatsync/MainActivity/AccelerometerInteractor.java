@@ -6,11 +6,9 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
-import junit.framework.Assert;
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 
 /**
  * Created by Ben on 2017-08-05.
@@ -18,22 +16,23 @@ import java.util.Collections;
 
 public class AccelerometerInteractor implements MainContract.Interactor, SensorEventListener {
 
-    private class AccelerometerData {
-        private float mMovingAverage;
-        private long mTimeStamp;
+    EventBus mEventBus = EventBus.getDefault();
 
-        AccelerometerData(float movingAverage, long timestamp) {
+    public class AccelerometerDataEvent {
+        public float mMovingAverage;
+        public long mTimeStamp;
+
+        AccelerometerDataEvent(float movingAverage, long timestamp) {
             mMovingAverage = movingAverage;
             mTimeStamp = timestamp;
         }
-
     }
 
     private final static int MOVING_AVERAGE_RANGE = 3;
 
     private SensorManager mSensorManager;
     private Sensor mSensor;
-    private ArrayList<AccelerometerData> mSensorData;
+    private ArrayList<AccelerometerDataEvent> mSensorData;
     private ArrayList<Float> mMovingAverageDataList;
 
     public void init(Context context) {
@@ -51,9 +50,10 @@ public class AccelerometerInteractor implements MainContract.Interactor, SensorE
         mMovingAverageDataList.add(calcNorm(event.values));
 
         if (dataSize >= MOVING_AVERAGE_RANGE) {
-            mSensorData.add(
-                    new AccelerometerData(average(mMovingAverageDataList), event.timestamp)
-            );
+            AccelerometerDataEvent dataEvent
+                    = new AccelerometerDataEvent(average(mMovingAverageDataList), event.timestamp);
+            mSensorData.add(dataEvent);
+            mEventBus.post(dataEvent);
         }
     }
 
@@ -65,6 +65,8 @@ public class AccelerometerInteractor implements MainContract.Interactor, SensorE
         }
         return avg;
     }
+
+
 
     private float calcNorm(float[] data) {
         // Protects against overflow

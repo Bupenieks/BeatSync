@@ -13,6 +13,17 @@ import android.widget.Toast;
 
 import com.benupenieks.beatsync.R;
 import com.benupenieks.beatsync.SpotifyController;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+
+import org.greenrobot.eventbus.EventBus;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,9 +35,17 @@ import com.benupenieks.beatsync.SpotifyController;
  */
 public class MainPageFragment extends Fragment implements MainPageContract.View {
 
+    private class AccelerometerGraphData {
+        public LineDataSet dataSet;
+        public LineData data;
+        public List<Entry> entries = new ArrayList<Entry>();
+    }
+
     private MainPagePresenter mPresenter = new MainPagePresenter();
 
     private EditText mBpmBox;
+    private LineChart mAccelerometerGraph;
+    private AccelerometerGraphData mGraphData = new AccelerometerGraphData();
 
     // FIXME
     private static final int MAX_BPM = 300;
@@ -111,6 +130,7 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
             }
         });
 
+        mAccelerometerGraph = (LineChart) view.findViewById(R.id.accelerometer_graph);
 
         return view;
     }
@@ -150,5 +170,37 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
 
     public void displayErrorToast(String errorMsg) {
         Toast.makeText(getContext(), errorMsg, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mPresenter.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mPresenter.onStop();
+    }
+
+    @Override
+    public void updateGraph(float x, float y) {
+        Entry newEntry = new Entry(x, y);
+        mGraphData.entries.add(newEntry);
+        if (mGraphData.entries.size() == 2) {
+            mGraphData.dataSet = new LineDataSet(mGraphData.entries, "Accelerometer");
+            mGraphData.dataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
+            List<ILineDataSet> tempHolder = new ArrayList<>();
+            tempHolder.add(mGraphData.dataSet);
+            mGraphData.data = new LineData(tempHolder);
+            mAccelerometerGraph.setData(mGraphData.data);
+            mAccelerometerGraph.invalidate();
+        } else if (mGraphData.entries.size() > 2) {
+            mGraphData.dataSet.addEntry(newEntry);
+            mGraphData.data.notifyDataChanged();
+            mAccelerometerGraph.notifyDataSetChanged();
+            mAccelerometerGraph.invalidate();
+        }
     }
 }

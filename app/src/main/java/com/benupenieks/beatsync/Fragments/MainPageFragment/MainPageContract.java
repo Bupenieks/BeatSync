@@ -11,9 +11,15 @@ import android.content.Intent;
 public interface MainPageContract {
     interface View {
         void displayErrorToast(String errorMsg);
+
+        void updateGraph(float x, float y);
     }
 
     interface Presenter {
+        void onStart();
+
+        void onStop();
+
         void attachView(View view);
 
         void detatchView();
@@ -27,9 +33,16 @@ public interface MainPageContract {
         void onUpdateBpm(int bpm);
 
         void onDisplayErrorToast(String errorMsg);
+
+        void updateAccelerometerGraph(float timestamp, float movingAverage);
+
     }
 
     interface Interactor{
+        void start();
+
+        void stop();
+
         void spotifyLogIn(View view);
 
         void verifySpotifyLogin(View view, int resultCode, Intent intent);

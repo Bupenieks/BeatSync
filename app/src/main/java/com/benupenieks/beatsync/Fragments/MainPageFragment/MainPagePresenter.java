@@ -8,7 +8,7 @@ import android.content.Intent;
 
 public class MainPagePresenter implements MainPageContract.Presenter{
     private MainPageContract.View mView;
-    private MainPageContract.Interactor mInteractor = new MainPageInteractor();
+    private MainPageContract.Interactor mInteractor = new MainPageInteractor(this);
 
     public MainPagePresenter() {}
 
@@ -44,6 +44,21 @@ public class MainPagePresenter implements MainPageContract.Presenter{
     @Override
     public void onDisplayErrorToast(String errorMsg) {
         mView.displayErrorToast(errorMsg);
+    }
+
+    @Override
+    public void onStart() {
+        mInteractor.start();
+    }
+
+    @Override
+    public void onStop() {
+        mInteractor.stop();
+    }
+
+    @Override
+    public void updateAccelerometerGraph(float timestamp, float movingAverage) {
+        mView.updateGraph(timestamp, movingAverage);
     }
 }
 
