@@ -40,9 +40,12 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
         public LineData data;
         public List<Entry> entries = new ArrayList<Entry>();
 
+        private final int MAX_DATA_POINTS = 300;
+
         public void updateData(Entry entry) {
-            mGraphData.entries.add(entry);
-            if (mGraphData.entries.size() == 2) {
+            entries.add(entry);
+            int numEntries = entries.size();
+            if (numEntries == 2) {
                 // init graph
                 dataSet = new LineDataSet(entries, "Accelerometer");
                 dataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
@@ -51,8 +54,13 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
                 data = new LineData(tempHolder);
                 mAccelerometerGraph.setData(data);
                 mAccelerometerGraph.invalidate();
-            } else if (mGraphData.entries.size() > 2) {
+            } else if (numEntries > 2) {
                 // update graph
+
+                if (numEntries >= MAX_DATA_POINTS) {
+                    dataSet.removeEntry(0);
+                    entries.remove(0);
+                }
                 dataSet.addEntry(entry);
                 data.notifyDataChanged();
                 mAccelerometerGraph.notifyDataSetChanged();
