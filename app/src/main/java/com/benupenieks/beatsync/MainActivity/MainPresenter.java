@@ -1,5 +1,7 @@
 package com.benupenieks.beatsync.MainActivity;
 
+import android.app.Activity;
+import android.content.Context;
 import android.support.v4.app.Fragment;
 
 /**
@@ -8,8 +10,8 @@ import android.support.v4.app.Fragment;
 
 public class MainPresenter implements MainContract.Presenter {
 
-    AccelerometerInteractor mAccelerometer = new AccelerometerInteractor();
     MainContract.View mView;
+    AccelerometerInteractor mAccelerometer = new AccelerometerInteractor();
 
     @Override
     public void attachView(MainContract.View view) {
@@ -26,5 +28,9 @@ public class MainPresenter implements MainContract.Presenter {
         mAccelerometer.resume();
     }
 
-    public void onPause() {}
+    public void onPause() { mAccelerometer.pause(); }
+
+    public void onStart(Activity activity) {
+        mAccelerometer.init((Context) activity);
+    }
 }

@@ -39,6 +39,26 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
         public LineDataSet dataSet;
         public LineData data;
         public List<Entry> entries = new ArrayList<Entry>();
+
+        public void updateData(Entry entry) {
+            mGraphData.entries.add(entry);
+            if (mGraphData.entries.size() == 2) {
+                // init graph
+                dataSet = new LineDataSet(entries, "Accelerometer");
+                dataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
+                List<ILineDataSet> tempHolder = new ArrayList<>();
+                tempHolder.add(dataSet);
+                data = new LineData(tempHolder);
+                mAccelerometerGraph.setData(data);
+                mAccelerometerGraph.invalidate();
+            } else if (mGraphData.entries.size() > 2) {
+                // update graph
+                dataSet.addEntry(entry);
+                data.notifyDataChanged();
+                mAccelerometerGraph.notifyDataSetChanged();
+                mAccelerometerGraph.invalidate();
+            }
+        }
     }
 
     private MainPagePresenter mPresenter = new MainPagePresenter();
@@ -186,21 +206,6 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
 
     @Override
     public void updateGraph(float x, float y) {
-        Entry newEntry = new Entry(x, y);
-        mGraphData.entries.add(newEntry);
-        if (mGraphData.entries.size() == 2) {
-            mGraphData.dataSet = new LineDataSet(mGraphData.entries, "Accelerometer");
-            mGraphData.dataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
-            List<ILineDataSet> tempHolder = new ArrayList<>();
-            tempHolder.add(mGraphData.dataSet);
-            mGraphData.data = new LineData(tempHolder);
-            mAccelerometerGraph.setData(mGraphData.data);
-            mAccelerometerGraph.invalidate();
-        } else if (mGraphData.entries.size() > 2) {
-            mGraphData.dataSet.addEntry(newEntry);
-            mGraphData.data.notifyDataChanged();
-            mAccelerometerGraph.notifyDataSetChanged();
-            mAccelerometerGraph.invalidate();
-        }
+        mGraphData.updateData(new Entry(x, y));
     }
 }

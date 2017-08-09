@@ -1,5 +1,6 @@
 package com.benupenieks.beatsync.MainActivity;
 
+import android.content.Context;
 import android.net.Uri;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -43,7 +44,6 @@ public class MainActivity extends AppCompatActivity implements
 
         mPresenter = new MainPresenter();
         mPresenter.attachView(this);
-
     }
 
     // @Override
@@ -122,5 +122,11 @@ public class MainActivity extends AppCompatActivity implements
     protected void onPause() {
         super.onPause();
         mPresenter.onPause();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mPresenter.onStart(this);
     }
 }
