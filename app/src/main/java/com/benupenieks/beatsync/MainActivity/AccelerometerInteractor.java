@@ -31,7 +31,7 @@ public class AccelerometerInteractor implements MainContract.Interactor, SensorE
         }
     }
 
-    private final static int MOVING_AVERAGE_RANGE = 3;
+    private final static int MOVING_AVERAGE_RANGE = 5;
 
     private SensorManager mSensorManager;
     private Sensor mSensor;

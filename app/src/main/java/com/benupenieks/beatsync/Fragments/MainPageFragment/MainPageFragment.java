@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.benupenieks.beatsync.R;
 import com.benupenieks.beatsync.SpotifyController;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -38,7 +39,7 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
     private class AccelerometerGraphData {
         public LineDataSet dataSet;
         public LineData data;
-        public List<Entry> entries = new ArrayList<Entry>();
+        public List<Entry> entries = new ArrayList<>();
 
         private final int MAX_DATA_POINTS = 300;
 
@@ -52,6 +53,9 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
                 List<ILineDataSet> tempHolder = new ArrayList<>();
                 tempHolder.add(dataSet);
                 data = new LineData(tempHolder);
+                dataSet.setDrawValues(false);
+                dataSet.setLineWidth(3.f);
+                dataSet.setDrawCircles(false);
                 mAccelerometerGraph.setData(data);
                 mAccelerometerGraph.invalidate();
             } else if (numEntries > 2) {
@@ -158,7 +162,21 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
             }
         });
 
+        // Chart formatting
         mAccelerometerGraph = (LineChart) view.findViewById(R.id.accelerometer_graph);
+        mAccelerometerGraph.setDrawGridBackground(false);
+        mAccelerometerGraph.setDrawBorders(false);
+        mAccelerometerGraph.getAxisLeft().setDrawLabels(false);
+        mAccelerometerGraph.getAxisRight().setDrawLabels(false);
+        mAccelerometerGraph.getXAxis().setDrawLabels(false);
+        mAccelerometerGraph.getLegend().setEnabled(false);
+        mAccelerometerGraph.getAxisLeft().setDrawGridLines(false);
+        mAccelerometerGraph.getAxisLeft().setEnabled(false);
+        mAccelerometerGraph.getXAxis().setEnabled(false);
+        mAccelerometerGraph.getAxisRight().setEnabled(false);
+
+        Description des = mAccelerometerGraph.getDescription();
+        des.setEnabled(false);
 
         return view;
     }
