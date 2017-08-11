@@ -2,7 +2,6 @@ package com.benupenieks.beatsync.Fragments.MainPageFragment;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.widget.Toast;
 
 
 import com.benupenieks.beatsync.Fragments.PlaylistSelectionFragment.PlaylistSelectionFragment;
@@ -13,14 +12,10 @@ import com.benupenieks.beatsync.Track;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
-import static java.security.AccessController.getContext;
 
 /**
  * Created by Ben on 2017-07-22.
@@ -63,15 +58,26 @@ public class MainPageInteractor implements MainPageContract.Interactor {
     }
 
     @Override
-    public void playRandomTrack(MainPageContract.Presenter listener) {
+    public void playRandomTrack() {
         Random rand = new Random();
         int size = mValidTracks.size();
         if (size > 0) {
             int index = rand.nextInt(size);
             mSpotify.playTrack(mValidTracks.get(index));
         } else {
-            listener.onDisplayErrorToast("No songs sync with that BPM.");
+            mListener.onDisplayErrorToast("No songs sync with that BPM.");
         }
+    }
+
+    @Override
+    public void playDifferentTrack(Track trackNotToPlay) {
+        for (Track track : mValidTracks) {
+            if (track != trackNotToPlay) {
+                mSpotify.playTrack(track, this);
+                return;
+            }
+        }
+        mSpotify.playTrack(trackNotToPlay);
     }
 
     @Override
@@ -92,5 +98,15 @@ public class MainPageInteractor implements MainPageContract.Interactor {
     @Subscribe
     public void onAccelerometerDataEvent(AccelerometerInteractor.AccelerometerDataEvent event) {
         mListener.updateAccelerometerGraph(((float) event.mTimeStamp) / 1000000.f, event.mMovingAverage);
+    }
+
+    @Override
+    public void trackInteraction(SpotifyController.Interaction interaction) {
+        mSpotify.trackInteraction(interaction, this);
+    }
+
+    @Override
+    public void onError(SpotifyController.Interaction interaction) {
+        mListener.onError(interaction);
     }
 }

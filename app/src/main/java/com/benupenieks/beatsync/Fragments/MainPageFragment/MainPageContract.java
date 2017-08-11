@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
+import com.benupenieks.beatsync.SpotifyController;
+import com.benupenieks.beatsync.Track;
+
 /**
  * Created by Ben on 2017-07-22.
  */
@@ -13,6 +16,10 @@ public interface MainPageContract {
         void displayErrorToast(String errorMsg);
 
         void updateGraph(float x, float y);
+
+        void setCurrentBpm(int bpm);
+
+        void setPlayButtonState(boolean state);
     }
 
     interface Presenter {
@@ -28,13 +35,13 @@ public interface MainPageContract {
 
         void onSpotifyLoginReceived(int resultCode, Intent intent);
 
-        void onPlayTrack();
-
-        void onUpdateBpm(int bpm);
+        void onPlayButtonPress(String bpmContents, int currentBpm, boolean state);
 
         void onDisplayErrorToast(String errorMsg);
 
         void updateAccelerometerGraph(float timestamp, float movingAverage);
+
+        void onError(SpotifyController.Interaction interaction);
 
     }
 
@@ -47,8 +54,14 @@ public interface MainPageContract {
 
         void verifySpotifyLogin(View view, int resultCode, Intent intent);
 
-        void playRandomTrack(MainPageContract.Presenter listener);
+        void playRandomTrack();
+
+        void playDifferentTrack(Track trackNotToPlay);
 
         void updateValidTracks(int bpm);
+
+        void trackInteraction(SpotifyController.Interaction interaction);
+
+        void onError(SpotifyController.Interaction interaction);
     }
 }

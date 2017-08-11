@@ -26,6 +26,8 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 import java.util.List;
 
+import jp.co.recruit_lifestyle.android.widget.PlayPauseButton;
+
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -77,6 +79,7 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
 
     private EditText mBpmBox;
     private LineChart mAccelerometerGraph;
+    private PlayPauseButton mPlayButton;
     private AccelerometerGraphData mGraphData = new AccelerometerGraphData();
 
     // FIXME
@@ -141,28 +144,16 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
 
         mBpmBox = (EditText) view.findViewById(R.id.bpm_box);
 
-        view.findViewById(R.id.play).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String bpmContents = mBpmBox.getText().toString();
-                if (!TextUtils.isEmpty(bpmContents)) {
-                    int bpm = Integer.parseInt(bpmContents);
-                    // Todo detect playlist change
-                    if (bpm != mCurrentBpm && bpm > 0) {
-                        mCurrentBpm = bpm;
-                        mPresenter.onUpdateBpm(bpm);
-                    }
-                }
+        mPlayButton = (PlayPauseButton) view.findViewById(R.id.play_button);
 
-                if (mCurrentBpm > 0 && mCurrentBpm < MAX_BPM) {
-                    mPresenter.onPlayTrack();
-                } else {
-                    displayErrorToast("Enter a valid BPM");
-                }
+        mPlayButton.setOnControlStatusChangeListener(new PlayPauseButton.OnControlStatusChangeListener() {
+            @Override
+            public void onStatusChange(View view, boolean state) {
+                mPresenter.onPlayButtonPress(mBpmBox.getText().toString(), mCurrentBpm, state);
             }
         });
 
-        // Chart formatting
+        // Graph formatting
         mAccelerometerGraph = (LineChart) view.findViewById(R.id.accelerometer_graph);
         mAccelerometerGraph.setDrawGridBackground(false);
         mAccelerometerGraph.setDrawBorders(false);
@@ -233,5 +224,11 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
     @Override
     public void updateGraph(float x, float y) {
         mGraphData.updateData(new Entry(x, y));
+    }
+
+    public void setCurrentBpm(int bpm) { mCurrentBpm = bpm; }
+
+    public void setPlayButtonState(boolean state) {
+        mPlayButton.setPlayed(state);
     }
 }

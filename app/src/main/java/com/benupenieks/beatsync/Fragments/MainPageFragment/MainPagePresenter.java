@@ -1,6 +1,9 @@
 package com.benupenieks.beatsync.Fragments.MainPageFragment;
 
 import android.content.Intent;
+import android.text.TextUtils;
+
+import com.benupenieks.beatsync.SpotifyController;
 
 /**
  * Created by Ben on 2017-07-22.
@@ -9,6 +12,8 @@ import android.content.Intent;
 public class MainPagePresenter implements MainPageContract.Presenter{
     private MainPageContract.View mView;
     private MainPageContract.Interactor mInteractor = new MainPageInteractor(this);
+
+    private static final int MAX_BPM = 300;
 
     public MainPagePresenter() {}
 
@@ -33,12 +38,30 @@ public class MainPagePresenter implements MainPageContract.Presenter{
     }
 
     @Override
-    public void onPlayTrack() {
-        mInteractor.playRandomTrack(this);
-    }
+    public void onPlayButtonPress(String bpmContents, int currentBpm, boolean state) {
+        if (state) {
+            if (!TextUtils.isEmpty(bpmContents)) {
+                int bpm = Integer.parseInt(bpmContents);
+                // Todo detect playlist change
+                if (bpm != currentBpm && bpm > 0) {
+                    mView.setCurrentBpm(bpm);
+                    mInteractor.updateValidTracks(bpm);
+                }
+            } else {
+                mView.displayErrorToast("Enter a BPM");
+                mView.setPlayButtonState(!state);
+                return;
+            }
 
-    public void onUpdateBpm(int bpm) {
-        mInteractor.updateValidTracks(bpm);
+            if (currentBpm > 0 && currentBpm < MAX_BPM) {
+                mInteractor.trackInteraction(SpotifyController.Interaction.PLAY);
+            } else {
+                mView.displayErrorToast("Enter a valid BPM");
+                mView.setPlayButtonState(!state);
+            }
+        } else {
+            mInteractor.trackInteraction(SpotifyController.Interaction.PAUSE);
+        }
     }
 
     @Override
@@ -59,6 +82,29 @@ public class MainPagePresenter implements MainPageContract.Presenter{
     @Override
     public void updateAccelerometerGraph(float timestamp, float movingAverage) {
         mView.updateGraph(timestamp, movingAverage);
+    }
+
+    @Override
+    public void onError(SpotifyController.Interaction interaction) {
+        switch (interaction) {
+            case PLAY:
+                mView.displayErrorToast("Could not play track");
+                break;
+            case PAUSE:
+                mView.displayErrorToast("Could not pause track");
+                break;
+            case NEXT_TRACK:
+                mView.displayErrorToast("Could not play next track");
+                break;
+            case PREVIOUS_TRACK:
+                mView.displayErrorToast("No previous track");
+                break;
+            case INVALID:
+                mView.displayErrorToast("Invalid interaction request");
+                break;
+            default:
+                mView.displayErrorToast("Unknown error");
+        }
     }
 }
 
