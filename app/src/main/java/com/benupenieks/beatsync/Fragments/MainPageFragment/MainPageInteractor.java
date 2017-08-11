@@ -84,7 +84,7 @@ public class MainPageInteractor implements MainPageContract.Interactor {
     public void updateValidTracks(int bpm) {
         mValidTracks.clear();
         Map<Integer, ArrayList<Track>> BpmTrackMap = mSpotify.getBpmTrackMap();
-        for (int i = bpm; i < MAX_BPM; i+=i) {
+        for (int i = bpm; i < MAX_BPM; i+=bpm) {
             for (int j = i - mBufferRange; j < i + mBufferRange || j == i; j++) {
                 if (j <= 0) { continue; }
                 ArrayList<Track> tracks = BpmTrackMap.get(j);
