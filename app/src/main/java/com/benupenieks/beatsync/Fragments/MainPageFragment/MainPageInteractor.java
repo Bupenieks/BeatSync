@@ -66,6 +66,7 @@ public class MainPageInteractor implements MainPageContract.Interactor {
             mSpotify.playTrack(mValidTracks.get(index));
         } else {
             mListener.onDisplayErrorToast("No songs sync with that BPM.");
+            mListener.onError(SpotifyController.Interaction.PLAY_NEW);
         }
     }
 
@@ -108,5 +109,10 @@ public class MainPageInteractor implements MainPageContract.Interactor {
     @Override
     public void onError(SpotifyController.Interaction interaction) {
         mListener.onError(interaction);
+    }
+
+    @Override
+    public void onSuccessfulInteraction(SpotifyController.Interaction interaction) {
+        mListener.onSuccess(interaction);
     }
 }

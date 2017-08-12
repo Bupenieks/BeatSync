@@ -59,7 +59,6 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
                 dataSet.setLineWidth(3.f);
                 dataSet.setDrawCircles(false);
                 mAccelerometerGraph.setData(data);
-                mAccelerometerGraph.invalidate();
             } else if (numEntries > 2) {
                 // update graph
 
@@ -70,17 +69,19 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
                 dataSet.addEntry(entry);
                 data.notifyDataChanged();
                 mAccelerometerGraph.notifyDataSetChanged();
-                mAccelerometerGraph.invalidate();
             }
+            mAccelerometerGraph.invalidate();
         }
     }
 
     private MainPagePresenter mPresenter = new MainPagePresenter();
 
+    private Toast mCurrentToast = null;
     private EditText mBpmBox;
     private LineChart mAccelerometerGraph;
     private PlayPauseButton mPlayButton;
     private AccelerometerGraphData mGraphData = new AccelerometerGraphData();
+    private boolean mPlayButtonState = false;
 
     // FIXME
     private static final int MAX_BPM = 300;
@@ -146,12 +147,31 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
 
         mPlayButton = (PlayPauseButton) view.findViewById(R.id.play_button);
 
+        mPlayButton.setPlayed(true);
+        mPlayButton.setPlayed(false);
+
         mPlayButton.setOnControlStatusChangeListener(new PlayPauseButton.OnControlStatusChangeListener() {
             @Override
             public void onStatusChange(View view, boolean state) {
                 mPresenter.onPlayButtonPress(mBpmBox.getText().toString(), mCurrentBpm, state);
             }
         });
+
+        view.findViewById(R.id.forward_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mPresenter.onForwardButtonPress();
+            }
+        });
+
+        view.findViewById(R.id.back_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mPresenter.onBackButtonPress();
+            }
+        });
+
+
 
         // Graph formatting
         mAccelerometerGraph = (LineChart) view.findViewById(R.id.accelerometer_graph);
@@ -206,7 +226,12 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
     }
 
     public void displayErrorToast(String errorMsg) {
-        Toast.makeText(getContext(), errorMsg, Toast.LENGTH_SHORT).show();
+        Toast toast = Toast.makeText(getContext(), errorMsg, Toast.LENGTH_SHORT);
+        if (mCurrentToast != null) {
+            mCurrentToast.cancel();
+        }
+        mCurrentToast = toast;
+        toast.show();
     }
 
     @Override
@@ -230,5 +255,6 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
 
     public void setPlayButtonState(boolean state) {
         mPlayButton.setPlayed(state);
+        mPlayButton.startAnimation();
     }
 }

@@ -11,7 +11,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.benupenieks.beatsync.Fragments.MainPageFragment.MainPageContract;
-import com.benupenieks.beatsync.Fragments.MainPageFragment.MainPageInteractor;
 import com.benupenieks.beatsync.Fragments.PlaylistSelectionFragment.PlaylistSelectionFragment;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
@@ -37,8 +36,11 @@ import java.util.Random;
 import java.util.Stack;
 
 import static com.benupenieks.beatsync.SpotifyController.Interaction.INVALID;
+import static com.benupenieks.beatsync.SpotifyController.Interaction.NEXT_TRACK;
 import static com.benupenieks.beatsync.SpotifyController.Interaction.PAUSE;
-import static com.benupenieks.beatsync.SpotifyController.Interaction.PLAY;
+import static com.benupenieks.beatsync.SpotifyController.Interaction.PLAY_NEW;
+import static com.benupenieks.beatsync.SpotifyController.Interaction.PREVIOUS_TRACK;
+import static com.benupenieks.beatsync.SpotifyController.Interaction.RESUME;
 
 
 /**
@@ -61,6 +63,7 @@ public class SpotifyController implements
     private String mUserId = null;
 
     private Stack<Track> trackStack = new Stack();
+    private Track mCurrentTrack = null;
 
     private List<Playlist> mPlaylists = new ArrayList<>();
     private List<Playlist> mSelectedPlaylists = new ArrayList<>();
@@ -71,7 +74,7 @@ public class SpotifyController implements
     private Player mPlayer;
 
     public enum Interaction {
-        NEXT_TRACK, PREVIOUS_TRACK, PAUSE, PLAY, INVALID
+        PLAY_NEW, PAUSE, RESUME, NEXT_TRACK, PREVIOUS_TRACK, INVALID
     }
 
 
@@ -107,60 +110,70 @@ public class SpotifyController implements
         Log.d("SpotifyController", "Playing track: " + track.getName()
                 + " BPM : " + track.getBPM());
         mPlayer.playUri(null, track.getUri(), 0, 0);
+        mCurrentTrack = track;
     }
 
     public void playTrack(Track track) {
         Log.d("SpotifyController", "Playing track: " + track.getName()
                 + " BPM : " + track.getBPM());
         mPlayer.playUri(null, track.getUri(), 0, 0);
+        mCurrentTrack = track;
     }
 
-    public void trackInteraction(Interaction interaction, final MainPageContract.Interactor errorListener) {
+    public void trackInteraction(Interaction interaction, final MainPageContract.Interactor listener) {
         switch (interaction) {
             case PAUSE:
                 mPlayer.pause(new Player.OperationCallback() {
                     @Override
                     public void onSuccess() {
                         Log.d(TAG, "Pause successful");
+                        listener.onSuccessfulInteraction(PAUSE);
                     }
 
                     @Override
                     public void onError(Error error) {
                         Log.d(TAG, error.toString());
-                        errorListener.onError(PAUSE);
+                        listener.onError(PAUSE);
                     }
                 });
                 break;
-            case PLAY:
-                long songDurationMs = mPlayer.getMetadata().currentTrack.durationMs;
-                long currentPositionMs = mPlayer.getPlaybackState().positionMs;
-                // TODO: Test
-                if (currentPositionMs == 0 || currentPositionMs == songDurationMs) {
-                    errorListener.playRandomTrack();
-                } else {
+            case RESUME:
+                if (mPlayer.getMetadata().currentTrack != null) {
                     mPlayer.resume(new Player.OperationCallback() {
                         @Override
                         public void onSuccess() {
                             Log.d(TAG, "Resume successful");
+                            listener.onSuccessfulInteraction(RESUME);
                         }
 
                         @Override
                         public void onError(Error error) {
                             Log.d(TAG, error.toString());
-                            errorListener.onError(PLAY);
+                            listener.onError(PLAY_NEW);
                         }
                     });
+                    break;
                 }
+            case PLAY_NEW:
+                listener.playRandomTrack();
                 break;
             case NEXT_TRACK:
-                errorListener.playRandomTrack();
+                if (mCurrentTrack != null) {
+                    trackStack.add(mCurrentTrack);
+                }
+                listener.playRandomTrack();
+                listener.onSuccessfulInteraction(NEXT_TRACK);
                 break;
             case PREVIOUS_TRACK:
                 if (!trackStack.empty()) {
-                  playTrack(trackStack.pop());
+                    playTrack(trackStack.pop());
+                    listener.onSuccessfulInteraction(PREVIOUS_TRACK);
+                } else {
+                    listener.onError(PREVIOUS_TRACK);
                 }
+                break;
             default:
-                errorListener.onError(INVALID);
+                listener.onError(INVALID);
 
         }
 

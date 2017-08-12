@@ -37,11 +37,17 @@ public interface MainPageContract {
 
         void onPlayButtonPress(String bpmContents, int currentBpm, boolean state);
 
+        void onForwardButtonPress();
+
+        void onBackButtonPress();
+
         void onDisplayErrorToast(String errorMsg);
 
         void updateAccelerometerGraph(float timestamp, float movingAverage);
 
         void onError(SpotifyController.Interaction interaction);
+
+        void onSuccess(SpotifyController.Interaction interaction);
 
     }
 
@@ -63,5 +69,7 @@ public interface MainPageContract {
         void trackInteraction(SpotifyController.Interaction interaction);
 
         void onError(SpotifyController.Interaction interaction);
+
+        void onSuccessfulInteraction(SpotifyController.Interaction interaction);
     }
 }
