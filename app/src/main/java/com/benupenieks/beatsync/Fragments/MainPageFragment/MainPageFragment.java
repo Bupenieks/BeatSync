@@ -28,6 +28,8 @@ import java.util.List;
 
 import jp.co.recruit_lifestyle.android.widget.PlayPauseButton;
 
+import static com.benupenieks.beatsync.Fragments.MainPageFragment.MainPageFragment.ToggleState.BEGIN;
+
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -73,6 +75,18 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
             mAccelerometerGraph.invalidate();
         }
     }
+    // For EventBus
+    public enum ToggleState {
+        BEGIN, END
+    }
+
+    public class RowingToggleEvent {
+        public ToggleState action;
+
+        RowingToggleEvent(ToggleState _action) {
+            action = _action;
+        }
+    }
 
     private MainPagePresenter mPresenter = new MainPagePresenter();
 
@@ -82,6 +96,7 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
     private PlayPauseButton mPlayButton;
     private AccelerometerGraphData mGraphData = new AccelerometerGraphData();
     private boolean mPlayButtonState = false;
+    private EventBus mEventBus = EventBus.getDefault();
 
     // FIXME
     private static final int MAX_BPM = 300;
@@ -171,6 +186,13 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
             }
         });
 
+        view.findViewById(R.id.rowing_toggle).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mEventBus.post(new RowingToggleEvent(ToggleState.BEGIN));
+            }
+        });
+
 
 
         // Graph formatting
@@ -256,5 +278,9 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
     public void setPlayButtonState(boolean state) {
         mPlayButton.setPlayed(state);
         mPlayButton.startAnimation();
+    }
+
+    public int getCurrentBpm() {
+        return mCurrentBpm;
     }
 }

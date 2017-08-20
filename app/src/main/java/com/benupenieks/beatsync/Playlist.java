@@ -63,7 +63,7 @@ public class Playlist {
     }
 
     public void addTrack(JSONObject track) {
-        mTrackList.add(new Track(track));
+        mTrackList.add(new Track(track, this));
     }
 
     public Track getRandomTrack() {

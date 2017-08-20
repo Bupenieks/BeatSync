@@ -93,11 +93,15 @@ public class AccelerometerInteractor implements MainContract.Interactor, SensorE
     }
 
     public void resume() {
-        mSensorManager.registerListener(this, mSensor, mSensorManager.SENSOR_DELAY_NORMAL);
+        if (mSensor != null) {
+            mSensorManager.registerListener(this, mSensor, mSensorManager.SENSOR_DELAY_NORMAL);
+        }
     }
 
     public void pause() {
-        mSensorManager.unregisterListener(this);
+        if (mSensorManager != null){
+            mSensorManager.unregisterListener(this);
+        }
     }
 
 

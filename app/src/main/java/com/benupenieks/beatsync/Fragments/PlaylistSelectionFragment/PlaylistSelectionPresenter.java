@@ -2,6 +2,8 @@ package com.benupenieks.beatsync.Fragments.PlaylistSelectionFragment;
 
 import com.benupenieks.beatsync.Playlist;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.List;
 
 /**
@@ -14,6 +16,10 @@ public class PlaylistSelectionPresenter implements
     private PlaylistSelectionContract.Interactor mInteractor = new PlaylistSelectionInteractor();
 
     public PlaylistSelectionPresenter() {}
+
+    public class PlaylistSelectionEvent {}
+
+    EventBus mEventBus = EventBus.getDefault();
 
     @Override
     public void attachView(PlaylistSelectionContract.View view) {
@@ -47,11 +53,13 @@ public class PlaylistSelectionPresenter implements
     @Override
     public void onPlaylistSelected(Playlist playlist) {
         mInteractor.addNewSelectedPlaylist(playlist);
+        mEventBus.post(new PlaylistSelectionEvent());
     }
 
     @Override
     public void onPlaylistDeselected(Playlist playlist) {
         mInteractor.removeSelectedPlaylist(playlist);
+        mEventBus.post(new PlaylistSelectionEvent());
     }
 
 }

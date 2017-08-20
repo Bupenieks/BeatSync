@@ -2,10 +2,12 @@ package com.benupenieks.beatsync.Fragments.MainPageFragment;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 
 
 import com.benupenieks.beatsync.Fragments.PlaylistSelectionFragment.PlaylistSelectionFragment;
 import com.benupenieks.beatsync.MainActivity.AccelerometerInteractor;
+import com.benupenieks.beatsync.Playlist;
 import com.benupenieks.beatsync.SpotifyController;
 import com.benupenieks.beatsync.Track;
 
@@ -31,6 +33,7 @@ public class MainPageInteractor implements MainPageContract.Interactor {
     }
 
     private static final int MAX_BPM = 300;
+    private static final String TAG = "MainPageInteractor";
 
     private List<Track> mValidTracks = new ArrayList<>();
     private int mBufferRange = 0;
@@ -83,14 +86,20 @@ public class MainPageInteractor implements MainPageContract.Interactor {
 
     @Override
     public void updateValidTracks(int bpm) {
+        if (bpm == 0) return;
         mValidTracks.clear();
         Map<Integer, ArrayList<Track>> BpmTrackMap = mSpotify.getBpmTrackMap();
+        List<Playlist> selectedPlaylists = mSpotify.getSelectedPlaylists();
+        Log.d(TAG, selectedPlaylists.toString());
         for (int i = bpm; i < MAX_BPM; i+=bpm) {
             for (int j = i - mBufferRange; j < i + mBufferRange || j == i; j++) {
                 if (j <= 0) { continue; }
                 ArrayList<Track> tracks = BpmTrackMap.get(j);
-                if (tracks != null) {
-                    mValidTracks.addAll(tracks);
+                if (tracks == null) { continue; }
+                for (Track track : tracks) {
+                    if (selectedPlaylists.contains(track.getParentPlaylist())) {
+                        mValidTracks.add(track);
+                    }
                 }
             }
         }

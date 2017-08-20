@@ -20,6 +20,8 @@ public interface MainPageContract {
         void setCurrentBpm(int bpm);
 
         void setPlayButtonState(boolean state);
+
+        int getCurrentBpm();
     }
 
     interface Presenter {

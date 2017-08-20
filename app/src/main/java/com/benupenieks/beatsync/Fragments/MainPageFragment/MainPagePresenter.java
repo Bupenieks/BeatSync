@@ -3,7 +3,11 @@ package com.benupenieks.beatsync.Fragments.MainPageFragment;
 import android.content.Intent;
 import android.text.TextUtils;
 
+import com.benupenieks.beatsync.Fragments.PlaylistSelectionFragment.PlaylistSelectionPresenter;
 import com.benupenieks.beatsync.SpotifyController;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import static android.os.SystemClock.sleep;
 import static com.benupenieks.beatsync.SpotifyController.Interaction.PLAY_NEW;
@@ -87,6 +91,7 @@ public class MainPagePresenter implements MainPageContract.Presenter{
     @Override
     public void onStart() {
         mInteractor.start();
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -129,6 +134,7 @@ public class MainPagePresenter implements MainPageContract.Presenter{
         switch (interaction) {
             case PLAY_NEW:
             case NEXT_TRACK:
+            case RESUME:
             case PREVIOUS_TRACK:
                 mView.setPlayButtonState(true);
                 break;
@@ -138,6 +144,11 @@ public class MainPagePresenter implements MainPageContract.Presenter{
             default:
                 mView.displayErrorToast("Invalid success received");
         }
+    }
+
+    @Subscribe
+    public void onPlaylistSelectionEvent(PlaylistSelectionPresenter.PlaylistSelectionEvent event) {
+        mInteractor.updateValidTracks(mView.getCurrentBpm());
     }
 }
 

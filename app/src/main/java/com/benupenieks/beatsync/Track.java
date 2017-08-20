@@ -8,6 +8,10 @@ import com.android.volley.VolleyError;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Created by Ben on 2017-07-23.
  */
@@ -22,8 +26,10 @@ public class Track {
 
     private int mTrackBPM;
 
+    private Playlist mParentPlaylist;
 
-    public Track(JSONObject track) {
+    public Track(JSONObject track, Playlist playlist) {
+        mParentPlaylist = playlist;
         mTrackData = track;
         try {
             mTrackName = mTrackData.getString("name");
@@ -47,6 +53,10 @@ public class Track {
     }
 
     public String getId() { return mTrackId; }
+
+    public Playlist getParentPlaylist() {
+        return mParentPlaylist;
+    }
 
     public Object getTrackFeature(String key) {
         try {
