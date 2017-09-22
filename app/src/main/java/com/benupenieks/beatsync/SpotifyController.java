@@ -23,6 +23,7 @@ import com.spotify.sdk.android.player.PlayerEvent;
 import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -72,6 +73,7 @@ public class SpotifyController implements
 
     private RequestQueue mRequestQueue;
     private Player mPlayer;
+    private EventBus mEventBus = EventBus.getDefault();
 
     public enum Interaction {
         PLAY_NEW, PAUSE, RESUME, NEXT_TRACK, PREVIOUS_TRACK, INVALID
@@ -109,6 +111,8 @@ public class SpotifyController implements
         }
         Log.d("SpotifyController", "Playing track: " + track.getName()
                 + " BPM : " + track.getBPM());
+
+        mEventBus.post(track);
         mPlayer.playUri(null, track.getUri(), 0, 0);
         mCurrentTrack = track;
     }
@@ -118,6 +122,7 @@ public class SpotifyController implements
                 + " BPM : " + track.getBPM());
         mPlayer.playUri(null, track.getUri(), 0, 0);
         mCurrentTrack = track;
+        mEventBus.post(track);
     }
 
     public void trackInteraction(Interaction interaction, final MainPageContract.Interactor listener) {

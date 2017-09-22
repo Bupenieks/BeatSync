@@ -23,18 +23,27 @@ public class Track {
     private String mTrackName;
     private String mTrackUri;
     private String mTrackId;
+    private String mTrackArtist;
 
     private int mTrackBPM;
 
     private Playlist mParentPlaylist;
 
+    public Track() {}
+
     public Track(JSONObject track, Playlist playlist) {
         mParentPlaylist = playlist;
         mTrackData = track;
         try {
-            mTrackName = mTrackData.getString("name");
             mTrackUri = mTrackData.getString("uri");
             mTrackId = mTrackData.getString("id");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            mTrackName = mTrackData.getString("name");
+            mTrackArtist = mTrackData.getJSONArray("artists").getJSONObject(0).getString("name");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -43,6 +52,8 @@ public class Track {
     public String getName() {
         return mTrackName;
     }
+
+    public String getArtist() {return mTrackArtist; }
 
     public String getUri() {
         return mTrackUri;

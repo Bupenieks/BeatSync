@@ -5,14 +5,17 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.benupenieks.beatsync.R;
 import com.benupenieks.beatsync.SpotifyController;
+import com.benupenieks.beatsync.Track;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.YAxis;
@@ -22,6 +25,8 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,6 +102,7 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
     private AccelerometerGraphData mGraphData = new AccelerometerGraphData();
     private boolean mPlayButtonState = false;
     private EventBus mEventBus = EventBus.getDefault();
+    private TextView mSongInfo;
 
     // FIXME
     private static final int MAX_BPM = 300;
@@ -151,15 +157,9 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_main_page, container, false);
-        view.findViewById(R.id.spotify_login).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                SpotifyController.getInstance().logIn(getActivity());
-            }
-        });
 
         mBpmBox = (EditText) view.findViewById(R.id.bpm_box);
-
+        mSongInfo = (TextView) view.findViewById(R.id.song_info);
         mPlayButton = (PlayPauseButton) view.findViewById(R.id.play_button);
 
         mPlayButton.setPlayed(true);
@@ -260,12 +260,14 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
     public void onStart() {
         super.onStart();
         mPresenter.onStart();
+        mEventBus.register(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
         mPresenter.onStop();
+        mEventBus.unregister(this);
     }
 
     @Override
@@ -282,5 +284,10 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
 
     public int getCurrentBpm() {
         return mCurrentBpm;
+    }
+
+    @Subscribe//(sticky = true, threadMode = ThreadMode.MAIN)
+    public void updateSongInfo(Track track) {
+        mSongInfo.setText(String.format("Playing: %s -- %s", track.getName(), track.getArtist()));
     }
 }

@@ -43,14 +43,14 @@ public class MainPresenter implements MainContract.Presenter {
     public void onPause() { mAccelerometer.pause(); }
 
     public void onStart(Activity activity) {
-
+        mAccelerometer.init(activity);
     }
 
     @Subscribe
     public void initAccelerometer(MainPageFragment.RowingToggleEvent event) {
         switch (event.action) {
             case BEGIN:
-                mAccelerometer.init((Context) mView);
+                mAccelerometer.beginRowing();
                 break;
             case END:
 

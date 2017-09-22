@@ -44,6 +44,8 @@ public class MainActivity extends AppCompatActivity implements
 
         mPresenter = new MainPresenter();
         mPresenter.attachView(this);
+
+        SpotifyController.getInstance().logIn(this);
     }
 
     // @Override
