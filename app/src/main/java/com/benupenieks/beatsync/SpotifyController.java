@@ -105,7 +105,7 @@ public class SpotifyController implements
     }
 
     public void playTrack(Track track, MainPageContract.Interactor errorListener) {
-        if (track == trackStack.peek()) {
+        if (!trackStack.empty() && track == trackStack.peek()) {
             errorListener.playDifferentTrack(track);
             return;
         }

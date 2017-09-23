@@ -66,7 +66,7 @@ public class MainPageInteractor implements MainPageContract.Interactor {
         int size = mValidTracks.size();
         if (size > 0) {
             int index = rand.nextInt(size);
-            mSpotify.playTrack(mValidTracks.get(index));
+            mSpotify.playTrack(mValidTracks.get(index), this);
         } else {
             mListener.onDisplayErrorToast("No songs sync with that BPM.");
             mListener.onError(SpotifyController.Interaction.PLAY_NEW);
