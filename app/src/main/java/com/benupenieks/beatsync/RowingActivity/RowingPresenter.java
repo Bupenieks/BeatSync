@@ -1,31 +1,31 @@
-package com.benupenieks.beatsync.MainActivity;
+package com.benupenieks.beatsync.RowingActivity;
 
 import android.app.Activity;
 import android.util.Log;
 
 import com.benupenieks.beatsync.Fragments.MainPageFragment.MainPageFragment;
-import com.benupenieks.beatsync.RowingActivity.AccelerometerInteractor;
+import com.benupenieks.beatsync.MainActivity.MainContract;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 /**
- * Created by Ben on 2017-08-05.
+ * Created by Ben on 2017-09-23.
  */
 
-public class MainPresenter implements MainContract.Presenter {
+public class RowingPresenter implements RowingContract.Presenter {
 
-    MainContract.View mView;
+    RowingContract.View mView;
     AccelerometerInteractor mAccelerometer = new AccelerometerInteractor();
 
     private final static String TAG = "MainPresenter";
 
-    MainPresenter() {
+    RowingPresenter() {
         EventBus.getDefault().register(this);
     }
 
     @Override
-    public void attachView(MainContract.View view) {
+    public void attachView(RowingContract.View view) {
         mView = view;
     }
 

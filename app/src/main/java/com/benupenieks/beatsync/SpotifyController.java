@@ -96,6 +96,8 @@ public class SpotifyController implements
         return mUserId;
     }
 
+    public Boolean isLoggedIn() { return mUserAccessToken != null; }
+
     public void addNewSelectedPlaylist(Playlist playlist) {
         mSelectedPlaylists.add(playlist);
     }
@@ -124,6 +126,19 @@ public class SpotifyController implements
         mCurrentTrack = track;
         mEventBus.post(track);
     }
+
+    public void pause() {
+        mPlayer.pause(new Player.OperationCallback() {
+            @Override
+            public void onSuccess() {
+                Log.d(TAG, "Pause successful");
+            }
+
+            @Override
+            public void onError(Error error) {
+                Log.d(TAG, error.toString());
+            }
+        });}
 
     public void trackInteraction(Interaction interaction, final MainPageContract.Interactor listener) {
         switch (interaction) {
@@ -233,6 +248,7 @@ public class SpotifyController implements
     public void onLoggedOut() {
         Log.d("SpotifyController", "Logged out");
         mUserId = null;
+        mUserAccessToken = null;
         mPlaylists.clear();
         mSelectedPlaylists.clear();
     }
@@ -311,6 +327,8 @@ public class SpotifyController implements
     }
 
     private void updatePlaylists(final PlaylistSelectionFragment listener) {
+        mPlaylists.clear();
+        mSelectedPlaylists.clear();
         updatePlaylists("https://api.spotify.com/v1/me/playlists", listener);
     }
 

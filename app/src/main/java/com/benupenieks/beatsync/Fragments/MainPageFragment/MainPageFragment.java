@@ -1,6 +1,7 @@
 package com.benupenieks.beatsync.Fragments.MainPageFragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,7 +14,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.benupenieks.beatsync.MainActivity.MainActivity;
 import com.benupenieks.beatsync.R;
+import com.benupenieks.beatsync.RowingActivity.RowingActivity;
 import com.benupenieks.beatsync.SpotifyController;
 import com.benupenieks.beatsync.Track;
 import com.github.mikephil.charting.charts.LineChart;
@@ -211,6 +214,16 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
 
         Description des = mAccelerometerGraph.getDescription();
         des.setEnabled(false);
+
+
+        view.findViewById(R.id.rowing_toggle).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SpotifyController.getInstance().pause();
+                Intent intent = new Intent(getContext(), RowingActivity.class);
+                startActivity(intent);
+            }
+        });
 
         return view;
     }

@@ -1,4 +1,4 @@
-package com.benupenieks.beatsync.MainActivity;
+package com.benupenieks.beatsync.RowingActivity;
 
 import android.content.Context;
 import android.hardware.Sensor;
@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.benupenieks.beatsync.Fragments.MainPageFragment.MainPageFragment;
+import com.benupenieks.beatsync.MainActivity.MainContract;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -21,7 +22,7 @@ import java.util.Timer;
  * Created by Ben on 2017-08-05.
  */
 
-public class AccelerometerInteractor implements MainContract.Interactor, SensorEventListener {
+public class AccelerometerInteractor implements RowingContract.Interactor, SensorEventListener {
     private static final String TAG = "AccelerometerInteractor";
 
     EventBus mEventBus = EventBus.getDefault();

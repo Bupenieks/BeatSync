@@ -6,7 +6,7 @@ import android.util.Log;
 
 
 import com.benupenieks.beatsync.Fragments.PlaylistSelectionFragment.PlaylistSelectionFragment;
-import com.benupenieks.beatsync.MainActivity.AccelerometerInteractor;
+import com.benupenieks.beatsync.RowingActivity.AccelerometerInteractor;
 import com.benupenieks.beatsync.Playlist;
 import com.benupenieks.beatsync.SpotifyController;
 import com.benupenieks.beatsync.Track;

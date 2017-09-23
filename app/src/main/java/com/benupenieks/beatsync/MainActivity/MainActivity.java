@@ -11,7 +11,9 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.view.Window;
+import android.widget.EditText;
 
 import com.afollestad.aesthetic.Aesthetic;
 import com.afollestad.aesthetic.AestheticActivity;
@@ -19,7 +21,10 @@ import com.benupenieks.beatsync.Fragments.MainPageFragment.MainPageContract;
 import com.benupenieks.beatsync.Fragments.MainPageFragment.MainPageFragment;
 import com.benupenieks.beatsync.Fragments.PlaylistSelectionFragment.PlaylistSelectionFragment;
 import com.benupenieks.beatsync.R;
+import com.benupenieks.beatsync.RowingActivity.RowingActivity;
 import com.benupenieks.beatsync.SpotifyController;
+
+import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
 public class MainActivity extends AestheticActivity implements
         MainContract.View,
