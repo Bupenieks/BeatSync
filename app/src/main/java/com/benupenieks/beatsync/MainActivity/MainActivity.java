@@ -1,6 +1,7 @@
 package com.benupenieks.beatsync.MainActivity;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -10,14 +11,17 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Window;
 
+import com.afollestad.aesthetic.Aesthetic;
+import com.afollestad.aesthetic.AestheticActivity;
 import com.benupenieks.beatsync.Fragments.MainPageFragment.MainPageContract;
 import com.benupenieks.beatsync.Fragments.MainPageFragment.MainPageFragment;
 import com.benupenieks.beatsync.Fragments.PlaylistSelectionFragment.PlaylistSelectionFragment;
 import com.benupenieks.beatsync.R;
 import com.benupenieks.beatsync.SpotifyController;
 
-public class MainActivity extends AppCompatActivity implements
+public class MainActivity extends AestheticActivity implements
         MainContract.View,
         MainPageFragment.OnFragmentInteractionListener,
         PlaylistSelectionFragment.OnFragmentInteractionListener {
@@ -32,7 +36,15 @@ public class MainActivity extends AppCompatActivity implements
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().hide();
         setContentView(R.layout.activity_main);
+
+
+        Aesthetic.get()
+                .colorPrimaryRes(R.color.colorPrimary)
+                .colorWindowBackgroundRes(R.color.colorBackground)
+                .colorAccentRes(R.color.colorAccent)
+                .apply();
 
         mPagerAdapter = new PagerAdapter(getSupportFragmentManager());
 
@@ -46,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements
         mPresenter.attachView(this);
 
         SpotifyController.getInstance().logIn(this);
+
     }
 
     // @Override

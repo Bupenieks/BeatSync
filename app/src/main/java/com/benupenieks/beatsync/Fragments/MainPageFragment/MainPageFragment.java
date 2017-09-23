@@ -58,6 +58,7 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
             if (numEntries == 2) {
                 // init graph
                 dataSet = new LineDataSet(entries, "Accelerometer");
+                dataSet.setColors(R.color.colorAccent);
                 dataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
                 List<ILineDataSet> tempHolder = new ArrayList<>();
                 tempHolder.add(dataSet);
@@ -288,6 +289,6 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
 
     @Subscribe//(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateSongInfo(Track track) {
-        mSongInfo.setText(String.format("Playing: %s -- %s", track.getName(), track.getArtist()));
+        mSongInfo.setText(String.format("%s\n%s", track.getName(), track.getArtist()));
     }
 }
