@@ -36,8 +36,6 @@ import java.util.List;
 
 import jp.co.recruit_lifestyle.android.widget.PlayPauseButton;
 
-import static com.benupenieks.beatsync.Fragments.MainPageFragment.MainPageFragment.ToggleState.BEGIN;
-
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -82,18 +80,6 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
                 mAccelerometerGraph.notifyDataSetChanged();
             }
             mAccelerometerGraph.invalidate();
-        }
-    }
-    // For EventBus
-    public enum ToggleState {
-        BEGIN, END
-    }
-
-    public class RowingToggleEvent {
-        public ToggleState action;
-
-        RowingToggleEvent(ToggleState _action) {
-            action = _action;
         }
     }
 
@@ -190,12 +176,6 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
             }
         });
 
-        view.findViewById(R.id.rowing_toggle).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mEventBus.post(new RowingToggleEvent(ToggleState.BEGIN));
-            }
-        });
 
 
 
@@ -286,7 +266,8 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
 
     @Override
     public void updateGraph(float x, float y) {
-        mGraphData.updateData(new Entry(x, y));
+
+
     }
 
     public void setCurrentBpm(int bpm) { mCurrentBpm = bpm; }

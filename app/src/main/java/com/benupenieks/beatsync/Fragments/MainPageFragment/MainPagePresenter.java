@@ -96,6 +96,7 @@ public class MainPagePresenter implements MainPageContract.Presenter{
 
     @Override
     public void onStop() {
+        EventBus.getDefault().unregister(this);
         mInteractor.stop();
     }
 

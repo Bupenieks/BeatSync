@@ -18,12 +18,7 @@ public class RowingPresenter implements RowingContract.Presenter {
     RowingContract.View mView;
     AccelerometerInteractor mAccelerometer = new AccelerometerInteractor();
 
-    private final static String TAG = "MainPresenter";
-
-    RowingPresenter() {
-        EventBus.getDefault().register(this);
-    }
-
+    private final static String TAG = "RowingPresenter";
     @Override
     public void attachView(RowingContract.View view) {
         mView = view;
@@ -39,14 +34,25 @@ public class RowingPresenter implements RowingContract.Presenter {
         mAccelerometer.resume();
     }
 
-    public void onPause() { mAccelerometer.pause(); }
-
-    public void onStart(Activity activity) {
-        mAccelerometer.init(activity);
+    public void onPause() {
+        mAccelerometer.pause();
     }
 
+    public void onStart(Activity activity) {
+        mAccelerometer.init(activity, this);
+    }
+
+    public void onNewAccelerometerData(AccelerometerInteractor.AccelerometerDataEvent data) {
+        mView.updateGraph((float) data.mTimeStamp, data.mMovingAverage);
+    }
+
+    public void onRowingComplete(int strokeRate) {
+        mView.finish(strokeRate);
+    }
+
+    /*
     @Subscribe
-    public void initAccelerometer(MainPageFragment.RowingToggleEvent event) {
+    public void initAccelerometer(RowingActivity.RowingToggleEvent event) {
         switch (event.action) {
             case BEGIN:
                 mAccelerometer.beginRowing();
@@ -57,5 +63,5 @@ public class RowingPresenter implements RowingContract.Presenter {
             default:
                 Log.e(TAG, "Invalid Rowing Toggle Event");
         }
-    }
+    } */
 }

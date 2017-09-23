@@ -11,6 +11,8 @@ import com.benupenieks.beatsync.MainActivity.MainContract;
 public class RowingContract {
     interface View {
         void attachPresenter();
+
+        void updateGraph(float x, float y);
     }
 
     interface Presenter {
@@ -23,6 +25,10 @@ public class RowingContract {
         void onPause();
 
         void onStart(Activity activity);
+
+        void onNewAccelerometerData(AccelerometerInteractor.AccelerometerDataEvent data);
+
+        void onRowingComplete(int strokeRate);
     }
 
     interface Interactor {

@@ -20,10 +20,6 @@ public class MainPresenter implements MainContract.Presenter {
 
     private final static String TAG = "MainPresenter";
 
-    MainPresenter() {
-        EventBus.getDefault().register(this);
-    }
-
     @Override
     public void attachView(MainContract.View view) {
         mView = view;
@@ -36,26 +32,11 @@ public class MainPresenter implements MainContract.Presenter {
 
 
     public void onResume() {
-        mAccelerometer.resume();
     }
 
-    public void onPause() { mAccelerometer.pause(); }
+    public void onPause() {  }
 
     public void onStart(Activity activity) {
-        mAccelerometer.init(activity);
     }
 
-    @Subscribe
-    public void initAccelerometer(MainPageFragment.RowingToggleEvent event) {
-        switch (event.action) {
-            case BEGIN:
-                mAccelerometer.beginRowing();
-                break;
-            case END:
-
-                break;
-            default:
-                Log.e(TAG, "Invalid Rowing Toggle Event");
-        }
-    }
 }

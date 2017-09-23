@@ -20,16 +20,60 @@ import com.benupenieks.beatsync.MainActivity.MainContract;
 import com.benupenieks.beatsync.MainActivity.MainPresenter;
 import com.benupenieks.beatsync.R;
 import com.benupenieks.beatsync.SpotifyController;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
-public class RowingActivity
-        extends AestheticActivity implements
-        RowingContract.View,
-        MainPageFragment.OnFragmentInteractionListener,
-        PlaylistSelectionFragment.OnFragmentInteractionListener {
+public class RowingActivity extends AestheticActivity implements RowingContract.View {
 
     private RowingContract.Presenter mPresenter;
-    private SpotifyController mSpotify;
+    private LineChart mAccelerometerGraph;
+    private AccelerometerGraphData mGraphData = new AccelerometerGraphData();
+
+    private class AccelerometerGraphData {
+        public LineDataSet dataSet;
+        public LineData data;
+        public List<Entry> entries = new ArrayList<>();
+
+        private final int MAX_DATA_POINTS = 300;
+
+        public void updateData(Entry entry) {
+            entries.add(entry);
+            int numEntries = entries.size();
+            if (numEntries == 2) {
+                // init graph
+                dataSet = new LineDataSet(entries, "Accelerometer");
+                dataSet.setColors(R.color.colorAccent);
+                dataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
+                List<ILineDataSet> tempHolder = new ArrayList<>();
+                tempHolder.add(dataSet);
+                data = new LineData(tempHolder);
+                dataSet.setDrawValues(false);
+                dataSet.setLineWidth(3.f);
+                dataSet.setDrawCircles(false);
+                mAccelerometerGraph.setData(data);
+            } else if (numEntries > 2) {
+                // update graph
+
+                if (numEntries >= MAX_DATA_POINTS) {
+                    dataSet.removeEntry(0);
+                    entries.remove(0);
+                }
+                dataSet.addEntry(entry);
+                data.notifyDataChanged();
+                mAccelerometerGraph.notifyDataSetChanged();
+            }
+            mAccelerometerGraph.invalidate();
+        }
+    }
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,8 +98,25 @@ public class RowingActivity
             }
         });
 
-        mSpotify = SpotifyController.getInstance();
+
+        // Graph formatting
+        mAccelerometerGraph = (LineChart) findViewById(R.id.accelerometer_graph);
+        mAccelerometerGraph.setDrawGridBackground(false);
+        mAccelerometerGraph.setDrawBorders(false);
+        mAccelerometerGraph.getAxisLeft().setDrawLabels(false);
+        mAccelerometerGraph.getAxisRight().setDrawLabels(false);
+        mAccelerometerGraph.getXAxis().setDrawLabels(false);
+        mAccelerometerGraph.getLegend().setEnabled(false);
+        mAccelerometerGraph.getAxisLeft().setDrawGridLines(false);
+        mAccelerometerGraph.getAxisLeft().setEnabled(false);
+        mAccelerometerGraph.getXAxis().setEnabled(false);
+        mAccelerometerGraph.getAxisRight().setEnabled(false);
+
+        Description des = mAccelerometerGraph.getDescription();
+        des.setEnabled(false);
+
     }
+
 
     // @Override
     public void attachPresenter() {
@@ -76,11 +137,6 @@ public class RowingActivity
         super.onDestroy();
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
-
 
     protected void onResume() {
         super.onResume();
@@ -96,5 +152,9 @@ public class RowingActivity
     protected void onStart() {
         super.onStart();
         mPresenter.onStart(this);
+    }
+
+    public void updateGraph(float x, float y) {
+        mGraphData.updateData(new Entry(x, y));
     }
 }
