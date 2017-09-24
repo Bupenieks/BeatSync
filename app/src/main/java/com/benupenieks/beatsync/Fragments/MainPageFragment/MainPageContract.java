@@ -15,6 +15,8 @@ public interface MainPageContract {
     interface View {
         void displayErrorToast(String errorMsg);
 
+        void displayLowPriorityErrorToast(String errorMsg);
+
         void updateGraph(float x, float y);
 
         void setCurrentBpm(int bpm);
@@ -22,6 +24,8 @@ public interface MainPageContract {
         void setPlayButtonState(boolean state);
 
         int getCurrentBpm();
+
+
     }
 
     interface Presenter {
@@ -39,7 +43,7 @@ public interface MainPageContract {
 
         void onPlayButtonPress(String bpmContents, int currentBpm, boolean state);
 
-        void onForwardButtonPress();
+        void onForwardButtonPress(int bpm, int currentBpm);
 
         void onBackButtonPress();
 
@@ -71,6 +75,8 @@ public interface MainPageContract {
         void trackInteraction(SpotifyController.Interaction interaction);
 
         void onError(SpotifyController.Interaction interaction);
+
+        void onError(String message);
 
         void onSuccessfulInteraction(SpotifyController.Interaction interaction);
     }

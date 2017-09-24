@@ -144,7 +144,7 @@ public class AccelerometerInteractor implements RowingContract.Interactor, Senso
             int strokeTime = (int)(mStrokeTimes.get(i) - mStrokeTimes.get(i - 1));
             average = average * (i - 1) / i + strokeTime / i;
         }
-        return 60000 / average;
+        return average == 0 ? 1 : 60000 / average;
     }
 
     public void beginRowing() {
@@ -154,7 +154,7 @@ public class AccelerometerInteractor implements RowingContract.Interactor, Senso
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                    mBeginReading = true;
+                mBeginReading = true;
                 Log.d(TAG, "Beginning to read sensor data");
 
                 handler.postDelayed(new Runnable() {

@@ -34,6 +34,8 @@ dependencies {
     compile 'com.spotify.sdk:spotify-android-auth-1.0.0@aar'
     compile 'com.spotify.sdk:spotify-player-24-noconnect-2.20b@aar'
 
+    compile 'com.fxn769:musicwave:1.0'
+
     compile 'com.github.PhilJay:MPAndroidChart:v3.0.2'
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'com.github.recruit-lifestyle:PlayPauseButton:1.0'

@@ -74,7 +74,10 @@ public class MainPagePresenter implements MainPageContract.Presenter{
     }
 
     @Override
-    public void onForwardButtonPress() {
+    public void onForwardButtonPress(int bpm, int currentBpm) {
+        if (bpm != currentBpm) {
+            mInteractor.updateValidTracks(bpm);
+        }
         mInteractor.trackInteraction(SpotifyController.Interaction.NEXT_TRACK);
     }
 
@@ -109,24 +112,24 @@ public class MainPagePresenter implements MainPageContract.Presenter{
     public void onError(SpotifyController.Interaction interaction) {
         switch (interaction) {
             case PLAY_NEW:
-                mView.displayErrorToast("Could not play track");
+                mView.displayLowPriorityErrorToast("Could not play track");
                 mView.setPlayButtonState(false);
                 break;
             case PAUSE:
-                mView.displayErrorToast("Could not pause track");
+                mView.displayLowPriorityErrorToast("Could not pause track");
                 mView.setPlayButtonState(true);
                 break;
             case NEXT_TRACK:
-                mView.displayErrorToast("Could not play next track");
+                mView.displayLowPriorityErrorToast("Could not play next track");
                 break;
             case PREVIOUS_TRACK:
-                mView.displayErrorToast("No previous track");
+                mView.displayLowPriorityErrorToast("No previous track");
                 break;
             case INVALID:
-                mView.displayErrorToast("Invalid interaction request");
+                mView.displayLowPriorityErrorToast("Invalid interaction request");
                 break;
             default:
-                mView.displayErrorToast("Unknown error");
+                mView.displayLowPriorityErrorToast("Unknown error");
         }
     }
 

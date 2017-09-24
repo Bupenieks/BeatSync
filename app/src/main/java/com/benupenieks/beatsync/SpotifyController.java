@@ -106,16 +106,33 @@ public class SpotifyController implements
         mSelectedPlaylists.remove(playlist);
     }
 
-    public void playTrack(Track track, MainPageContract.Interactor errorListener) {
+    public void playTrack(Track track, final MainPageContract.Interactor errorListener) {
+        playTrack(track, errorListener, PLAY_NEW);
+    }
+
+    public void playTrack(Track track, final MainPageContract.Interactor errorListener, final Interaction interaction) {
         if (!trackStack.empty() && track == trackStack.peek()) {
             errorListener.playDifferentTrack(track);
+            return;
+        } else if (mSelectedPlaylists.isEmpty()) {
+            errorListener.onError("No playlists selected");
             return;
         }
         Log.d("SpotifyController", "Playing track: " + track.getName()
                 + " BPM : " + track.getBPM());
 
         mEventBus.post(track);
-        mPlayer.playUri(null, track.getUri(), 0, 0);
+        mPlayer.playUri(new Player.OperationCallback() {
+            @Override
+            public void onSuccess() {
+                errorListener.onSuccessfulInteraction(interaction);
+            }
+
+            @Override
+            public void onError(Error error) {
+                errorListener.onError(interaction);
+            }
+        }, track.getUri(), 0, 0);
         mCurrentTrack = track;
     }
 
@@ -182,12 +199,10 @@ public class SpotifyController implements
                     trackStack.add(mCurrentTrack);
                 }
                 listener.playRandomTrack();
-                listener.onSuccessfulInteraction(NEXT_TRACK);
                 break;
             case PREVIOUS_TRACK:
                 if (!trackStack.empty()) {
-                    playTrack(trackStack.pop());
-                    listener.onSuccessfulInteraction(PREVIOUS_TRACK);
+                    playTrack(trackStack.pop(), listener, PREVIOUS_TRACK);
                 } else {
                     listener.onError(PREVIOUS_TRACK);
                 }

@@ -68,7 +68,7 @@ public class MainPageInteractor implements MainPageContract.Interactor {
             int index = rand.nextInt(size);
             mSpotify.playTrack(mValidTracks.get(index), this);
         } else {
-            mListener.onDisplayErrorToast("No songs sync with that BPM.");
+            mListener.onDisplayErrorToast("No songs sync with that BPM\nTry selecting more playlists");
             mListener.onError(SpotifyController.Interaction.PLAY_NEW);
         }
     }
@@ -120,6 +120,10 @@ public class MainPageInteractor implements MainPageContract.Interactor {
         mListener.onError(interaction);
     }
 
+    @Override
+    public void onError(String message) {
+        mListener.onDisplayErrorToast(message);
+    }
     @Override
     public void onSuccessfulInteraction(SpotifyController.Interaction interaction) {
         mListener.onSuccess(interaction);

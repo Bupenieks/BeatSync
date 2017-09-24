@@ -2,11 +2,14 @@ package com.benupenieks.beatsync.Fragments.MainPageFragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.audiofx.Visualizer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +19,7 @@ import android.widget.Toast;
 
 import com.benupenieks.beatsync.MainActivity.MainActivity;
 import com.benupenieks.beatsync.R;
+import com.benupenieks.beatsync.RowingActivity.AccelerometerInteractor;
 import com.benupenieks.beatsync.RowingActivity.RowingActivity;
 import com.benupenieks.beatsync.SpotifyController;
 import com.benupenieks.beatsync.Track;
@@ -36,6 +40,8 @@ import java.util.List;
 
 import jp.co.recruit_lifestyle.android.widget.PlayPauseButton;
 
+import static android.app.Activity.RESULT_CANCELED;
+
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -46,56 +52,20 @@ import jp.co.recruit_lifestyle.android.widget.PlayPauseButton;
  */
 public class MainPageFragment extends Fragment implements MainPageContract.View {
 
-    private class AccelerometerGraphData {
-        public LineDataSet dataSet;
-        public LineData data;
-        public List<Entry> entries = new ArrayList<>();
-
-        private final int MAX_DATA_POINTS = 300;
-
-        public void updateData(Entry entry) {
-            entries.add(entry);
-            int numEntries = entries.size();
-            if (numEntries == 2) {
-                // init graph
-                dataSet = new LineDataSet(entries, "Accelerometer");
-                dataSet.setColors(R.color.colorAccent);
-                dataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
-                List<ILineDataSet> tempHolder = new ArrayList<>();
-                tempHolder.add(dataSet);
-                data = new LineData(tempHolder);
-                dataSet.setDrawValues(false);
-                dataSet.setLineWidth(3.f);
-                dataSet.setDrawCircles(false);
-                mAccelerometerGraph.setData(data);
-            } else if (numEntries > 2) {
-                // update graph
-
-                if (numEntries >= MAX_DATA_POINTS) {
-                    dataSet.removeEntry(0);
-                    entries.remove(0);
-                }
-                dataSet.addEntry(entry);
-                data.notifyDataChanged();
-                mAccelerometerGraph.notifyDataSetChanged();
-            }
-            mAccelerometerGraph.invalidate();
-        }
-    }
-
     private MainPagePresenter mPresenter = new MainPagePresenter();
 
     private Toast mCurrentToast = null;
     private EditText mBpmBox;
     private LineChart mAccelerometerGraph;
     private PlayPauseButton mPlayButton;
-    private AccelerometerGraphData mGraphData = new AccelerometerGraphData();
     private boolean mPlayButtonState = false;
     private EventBus mEventBus = EventBus.getDefault();
     private TextView mSongInfo;
+    private Visualizer mVisualizer;
 
     // FIXME
     private static final int MAX_BPM = 300;
+    private static final int ROWING_ACTIVITY_REQUEST_CODE = 1;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -106,7 +76,7 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
     private String mParam1;
     private String mParam2;
 
-    private int mCurrentBpm = 0;
+    private int mCurrentBpm = 1;
 
     private OnFragmentInteractionListener mListener;
 
@@ -165,7 +135,7 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
         view.findViewById(R.id.forward_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mPresenter.onForwardButtonPress();
+                mPresenter.onForwardButtonPress(Integer.parseInt(mBpmBox.getText().toString()), mCurrentBpm);
             }
         });
 
@@ -177,35 +147,26 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
         });
 
 
-
-
-        // Graph formatting
-        mAccelerometerGraph = (LineChart) view.findViewById(R.id.accelerometer_graph);
-        mAccelerometerGraph.setDrawGridBackground(false);
-        mAccelerometerGraph.setDrawBorders(false);
-        mAccelerometerGraph.getAxisLeft().setDrawLabels(false);
-        mAccelerometerGraph.getAxisRight().setDrawLabels(false);
-        mAccelerometerGraph.getXAxis().setDrawLabels(false);
-        mAccelerometerGraph.getLegend().setEnabled(false);
-        mAccelerometerGraph.getAxisLeft().setDrawGridLines(false);
-        mAccelerometerGraph.getAxisLeft().setEnabled(false);
-        mAccelerometerGraph.getXAxis().setEnabled(false);
-        mAccelerometerGraph.getAxisRight().setEnabled(false);
-
-        Description des = mAccelerometerGraph.getDescription();
-        des.setEnabled(false);
-
-
         view.findViewById(R.id.rowing_toggle).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 SpotifyController.getInstance().pause();
                 Intent intent = new Intent(getContext(), RowingActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, ROWING_ACTIVITY_REQUEST_CODE);
             }
         });
 
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_CANCELED) return;
+        switch (requestCode) {
+            case ROWING_ACTIVITY_REQUEST_CODE:
+                mBpmBox.setText(data.getIntExtra("stroke_rate", 1));
+        }
     }
 
     @Override
@@ -241,12 +202,29 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
         void onFragmentInteraction(Uri uri);
     }
 
+    @Override
     public void displayErrorToast(String errorMsg) {
         Toast toast = Toast.makeText(getContext(), errorMsg, Toast.LENGTH_SHORT);
         if (mCurrentToast != null) {
             mCurrentToast.cancel();
         }
+        TextView view = (TextView) toast.getView().findViewById(android.R.id.message);
+        if (view != null) {
+            view.setGravity(Gravity.CENTER);
+        }
         mCurrentToast = toast;
+        toast.show();
+
+    }
+
+    @Override
+    public void displayLowPriorityErrorToast(String errorMsg) {
+        if (mCurrentToast != null) return;
+        Toast toast = Toast.makeText(getContext(), errorMsg, Toast.LENGTH_SHORT);
+        TextView view = (TextView) toast.getView().findViewById(android.R.id.message);
+        if (view != null) {
+            view.setGravity(Gravity.CENTER);
+        }
         toast.show();
     }
 

@@ -47,21 +47,7 @@ public class RowingPresenter implements RowingContract.Presenter {
     }
 
     public void onRowingComplete(int strokeRate) {
-        mView.finish(strokeRate);
+        //mView.finish(strokeRate);
     }
 
-    /*
-    @Subscribe
-    public void initAccelerometer(RowingActivity.RowingToggleEvent event) {
-        switch (event.action) {
-            case BEGIN:
-                mAccelerometer.beginRowing();
-                break;
-            case END:
-
-                break;
-            default:
-                Log.e(TAG, "Invalid Rowing Toggle Event");
-        }
-    } */
 }
