@@ -10,6 +10,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import static android.os.SystemClock.sleep;
+import static com.benupenieks.beatsync.SpotifyController.Interaction.PAUSE;
 import static com.benupenieks.beatsync.SpotifyController.Interaction.PLAY_NEW;
 import static com.benupenieks.beatsync.SpotifyController.Interaction.RESUME;
 
@@ -69,7 +70,7 @@ public class MainPagePresenter implements MainPageContract.Presenter{
                 mView.setPlayButtonState(!state);
             }
         } else {
-            mInteractor.trackInteraction(SpotifyController.Interaction.PAUSE);
+            mInteractor.trackInteraction(PAUSE);
         }
     }
 
@@ -140,6 +141,7 @@ public class MainPagePresenter implements MainPageContract.Presenter{
             case NEXT_TRACK:
             case RESUME:
             case PREVIOUS_TRACK:
+            case FORCE_PLAY:
                 mView.setPlayButtonState(true);
                 break;
             case PAUSE:

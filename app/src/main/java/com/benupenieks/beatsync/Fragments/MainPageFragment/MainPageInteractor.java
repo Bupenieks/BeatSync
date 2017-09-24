@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import static com.benupenieks.beatsync.SpotifyController.Interaction.FORCE_PLAY;
+
 /**
  * Created by Ben on 2017-07-22.
  */
@@ -81,7 +83,7 @@ public class MainPageInteractor implements MainPageContract.Interactor {
                 return;
             }
         }
-        mSpotify.playTrack(trackNotToPlay);
+        mSpotify.playTrack(trackNotToPlay, this, FORCE_PLAY);
     }
 
     @Override
@@ -128,4 +130,6 @@ public class MainPageInteractor implements MainPageContract.Interactor {
     public void onSuccessfulInteraction(SpotifyController.Interaction interaction) {
         mListener.onSuccess(interaction);
     }
+
+
 }

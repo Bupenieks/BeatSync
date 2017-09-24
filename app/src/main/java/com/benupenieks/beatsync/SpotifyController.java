@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Stack;
 
+import static com.benupenieks.beatsync.SpotifyController.Interaction.FORCE_PLAY;
 import static com.benupenieks.beatsync.SpotifyController.Interaction.INVALID;
 import static com.benupenieks.beatsync.SpotifyController.Interaction.NEXT_TRACK;
 import static com.benupenieks.beatsync.SpotifyController.Interaction.PAUSE;
@@ -76,7 +77,7 @@ public class SpotifyController implements
     private EventBus mEventBus = EventBus.getDefault();
 
     public enum Interaction {
-        PLAY_NEW, PAUSE, RESUME, NEXT_TRACK, PREVIOUS_TRACK, INVALID
+        PLAY_NEW, PAUSE, RESUME, NEXT_TRACK, PREVIOUS_TRACK, INVALID, FORCE_PLAY
     }
 
 
@@ -111,7 +112,7 @@ public class SpotifyController implements
     }
 
     public void playTrack(Track track, final MainPageContract.Interactor errorListener, final Interaction interaction) {
-        if (!trackStack.empty() && track == trackStack.peek()) {
+        if (interaction != FORCE_PLAY && !trackStack.empty() && track == trackStack.peek()) {
             errorListener.playDifferentTrack(track);
             return;
         } else if (mSelectedPlaylists.isEmpty()) {
@@ -393,6 +394,7 @@ public class SpotifyController implements
     }
 
     public void updateTrackList() {
+        mBPMToTrackMap.clear();
         for (final Playlist playlist : mPlaylists) {
             String requestUrl = "https://api.spotify.com/v1/users/" + mUserId + "/playlists/"
                     + playlist.getId() + "/tracks";
@@ -423,7 +425,6 @@ public class SpotifyController implements
                     e.printStackTrace();
                 }
 
-                mBPMToTrackMap.clear();
                 playlist.populateTrackFeatures(mBPMToTrackMap);
 
             }

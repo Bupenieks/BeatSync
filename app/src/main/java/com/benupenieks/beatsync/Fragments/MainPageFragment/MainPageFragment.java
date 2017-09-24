@@ -135,7 +135,10 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
         view.findViewById(R.id.forward_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mPresenter.onForwardButtonPress(Integer.parseInt(mBpmBox.getText().toString()), mCurrentBpm);
+                String bpm = mBpmBox.getText().toString();
+                if (!bpm.isEmpty()) {
+                    mPresenter.onForwardButtonPress(Integer.parseInt(bpm), mCurrentBpm);
+                }
             }
         });
 
