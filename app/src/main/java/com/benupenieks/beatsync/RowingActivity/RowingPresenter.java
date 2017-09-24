@@ -42,6 +42,10 @@ public class RowingPresenter implements RowingContract.Presenter {
         mAccelerometer.init(activity, this);
     }
 
+    public void onStop() {
+         mAccelerometer.onStop();
+     }
+
     public void onNewAccelerometerData(AccelerometerInteractor.AccelerometerDataEvent data) {
         mView.updateGraph((float) data.mTimeStamp, data.mMovingAverage);
     }

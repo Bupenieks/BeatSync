@@ -26,8 +26,9 @@ import static java.security.AccessController.getContext;
 public class AccelerometerInteractor implements RowingContract.Interactor, SensorEventListener {
     private static final String TAG = "AccelerometerInteractor";
 
-    Timer mTimer = new Timer();
-    RowingContract.Presenter mListener = null;
+    private Timer mTimer = new Timer();
+    private RowingContract.Presenter mListener = null;
+    private final Handler mHandler = new Handler();
 
     public class AccelerometerDataEvent {
         public float mMovingAverage;
@@ -138,6 +139,10 @@ public class AccelerometerInteractor implements RowingContract.Interactor, Senso
         }
     }
 
+    public void onStop() {
+        mHandler.removeCallbacksAndMessages(null);
+    }
+
     private int calculateStrokeRate() {
         int average = 0;
         for (int i = 1; i < mStrokeTimes.size(); i++) {
@@ -150,19 +155,18 @@ public class AccelerometerInteractor implements RowingContract.Interactor, Senso
     public void beginRowing() {
         resume();
         Log.d(TAG, "START TIMER");
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
+        mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 mBeginReading = true;
                 Log.d(TAG, "Beginning to read sensor data");
 
-                handler.postDelayed(new Runnable() {
+                mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         Log.d(TAG, "Beginning to process sensor data");
 
-                        handler.postDelayed(new Runnable() {
+                        mHandler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 int strokeRate = calculateStrokeRate();
@@ -170,12 +174,12 @@ public class AccelerometerInteractor implements RowingContract.Interactor, Senso
                                 mSensorManager.unregisterListener(AccelerometerInteractor.this);
                                 mListener.onRowingComplete(strokeRate);
                             }
-                        }, 6000);
+                        }, 5000);
                         mBeginSynchronizing = true;
                     }
-                }, 2000);
+                }, 5000);
             }
-        }, 3000);
+        }, 5000);
     }
 
     public void stopRowing() {}

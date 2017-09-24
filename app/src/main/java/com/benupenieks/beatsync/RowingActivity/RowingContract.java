@@ -28,6 +28,8 @@ public class RowingContract {
 
         void onStart(Activity activity);
 
+        void onStop();
+
         void onNewAccelerometerData(AccelerometerInteractor.AccelerometerDataEvent data);
 
         void onRowingComplete(int strokeRate);

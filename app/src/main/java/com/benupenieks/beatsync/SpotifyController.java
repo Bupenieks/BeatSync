@@ -100,7 +100,9 @@ public class SpotifyController implements
     public Boolean isLoggedIn() { return mUserAccessToken != null; }
 
     public void addNewSelectedPlaylist(Playlist playlist) {
-        mSelectedPlaylists.add(playlist);
+        if (!mSelectedPlaylists.contains(playlist)) {
+            mSelectedPlaylists.add(playlist);
+        }
     }
 
     public void removeSelectedPlaylist(Playlist playlist) {
@@ -337,6 +339,9 @@ public class SpotifyController implements
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d("SpotifyController", "updateUserId failed");
+                if (error.networkResponse.statusCode != 404 ) {
+                    updateUserId();
+                }
             }
         };
 
@@ -387,6 +392,9 @@ public class SpotifyController implements
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d("SpotifyController", "updatePlaylists failed");
+                if (error.networkResponse.statusCode != 404 ) {
+                    updatePlaylists(requestUrl, listener);
+                }
             }
         };
 
@@ -402,7 +410,7 @@ public class SpotifyController implements
         }
     }
 
-    public void updateTrackList(String requestUrl, final Playlist playlist) {
+    public void updateTrackList(final String requestUrl, final Playlist playlist) {
 
         Response.Listener<JSONObject> responseListener = new Response.Listener<JSONObject>() {
             @Override
@@ -434,6 +442,9 @@ public class SpotifyController implements
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d("SpotifyController", "updateTrackList failed");
+                if (error.networkResponse.statusCode != 404 ) {
+                    updateTrackList(requestUrl, playlist);
+                }
             }
         };
 

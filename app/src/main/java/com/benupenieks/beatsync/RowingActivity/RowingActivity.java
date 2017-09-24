@@ -93,13 +93,13 @@ public class RowingActivity extends AestheticActivity implements RowingContract.
         mPresenter.attachView(this);
 
 
-        findViewById(R.id.finish_rowing).setOnClickListener(new View.OnClickListener() {
+        /*findViewById(R.id.finish_rowing).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(RowingActivity.this, MainActivity.class);
                 startActivity(intent);
             }
-        });
+        });*/
 
 
         // Graph formatting
@@ -155,6 +155,12 @@ public class RowingActivity extends AestheticActivity implements RowingContract.
     protected void onStart() {
         super.onStart();
         mPresenter.onStart(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mPresenter.onStop();
     }
 
     @Override

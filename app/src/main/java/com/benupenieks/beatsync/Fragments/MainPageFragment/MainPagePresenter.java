@@ -54,10 +54,10 @@ public class MainPagePresenter implements MainPageContract.Presenter{
                 int bpm = Integer.parseInt(bpmContents);
                 // Todo detect playlist change
                 if (bpm != currentBpm && bpm > 0) {
-                    mView.setCurrentBpm(bpm);
-                    mInteractor.updateValidTracks(bpm);
                     interaction = PLAY_NEW;
                 }
+                mView.setCurrentBpm(bpm);
+                mInteractor.updateValidTracks(bpm);
 
                 if (bpm > 0 && bpm < MAX_BPM) {
                     mInteractor.trackInteraction(interaction);
@@ -76,9 +76,7 @@ public class MainPagePresenter implements MainPageContract.Presenter{
 
     @Override
     public void onForwardButtonPress(int bpm, int currentBpm) {
-        if (bpm != currentBpm) {
-            mInteractor.updateValidTracks(bpm);
-        }
+        mInteractor.updateValidTracks(bpm);
         mInteractor.trackInteraction(SpotifyController.Interaction.NEXT_TRACK);
     }
 
@@ -115,6 +113,7 @@ public class MainPagePresenter implements MainPageContract.Presenter{
             case PLAY_NEW:
                 mView.displayLowPriorityErrorToast("Could not play track");
                 mView.setPlayButtonState(false);
+                mInteractor.trackInteraction(PAUSE);
                 break;
             case PAUSE:
                 mView.displayLowPriorityErrorToast("Could not pause track");
@@ -137,8 +136,8 @@ public class MainPagePresenter implements MainPageContract.Presenter{
     @Override
     public void onSuccess(SpotifyController.Interaction interaction) {
         switch (interaction) {
-            case PLAY_NEW:
             case NEXT_TRACK:
+            case PLAY_NEW:
             case RESUME:
             case PREVIOUS_TRACK:
             case FORCE_PLAY:
