@@ -14,7 +14,7 @@ To allow for more accurate synchronization, import as many different playlists f
 ## How it works
 
 Rowing stroke movement is quantified by reading accelerometer data, applying a low-pass filter and moving average,
-and normalizing the resulting acceleration vectors.
+and taking the magnitude the resulting acceleration vectors.
 
 Currently the app uses a very naive implementation of tempo detection -- that is to set certain acceleration
 threshold markers for peaks and troughs and record appropriate time intervals as they're are crossed. Since rowing strokes roughly follow a sinusoidal movement, it would be plausible to apply a sinusoidal regression to the data and estimate
