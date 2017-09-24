@@ -13,6 +13,8 @@ public class RowingContract {
         void attachPresenter();
 
         void updateGraph(float x, float y);
+
+        void finish(int strokeRate);
     }
 
     interface Presenter {

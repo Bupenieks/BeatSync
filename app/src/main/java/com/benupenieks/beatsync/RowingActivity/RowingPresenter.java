@@ -47,7 +47,7 @@ public class RowingPresenter implements RowingContract.Presenter {
     }
 
     public void onRowingComplete(int strokeRate) {
-        //mView.finish(strokeRate);
+        mView.finish(strokeRate);
     }
 
 }

@@ -65,7 +65,7 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
 
     // FIXME
     private static final int MAX_BPM = 300;
-    private static final int ROWING_ACTIVITY_REQUEST_CODE = 1;
+    public static final int ROWING_ACTIVITY_REQUEST_CODE = 1;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -262,5 +262,13 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
     @Subscribe//(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateSongInfo(Track track) {
         mSongInfo.setText(String.format("%s\n%s", track.getName(), track.getArtist()));
+    }
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onRowingResult(Integer strokeRate) {
+        Log.d("ROWINGRESULT", "HERE");
+        mPresenter.onForwardButtonPress(strokeRate, mCurrentBpm);
+        mCurrentBpm = strokeRate;
+        mBpmBox.setText(Integer.toString(strokeRate));
     }
 }

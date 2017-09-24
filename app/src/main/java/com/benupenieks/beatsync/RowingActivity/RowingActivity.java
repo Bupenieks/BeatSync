@@ -1,5 +1,6 @@
 package com.benupenieks.beatsync.RowingActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.design.widget.TabLayout;
@@ -27,6 +28,8 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -152,6 +155,15 @@ public class RowingActivity extends AestheticActivity implements RowingContract.
     protected void onStart() {
         super.onStart();
         mPresenter.onStart(this);
+    }
+
+    @Override
+    public void finish(int strokeRate) {
+        EventBus.getDefault().postSticky(strokeRate);
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("stroke_rate", strokeRate);
+        setResult(Activity.RESULT_OK, intent);
+        startActivity(intent);
     }
 
     public void updateGraph(float x, float y) {

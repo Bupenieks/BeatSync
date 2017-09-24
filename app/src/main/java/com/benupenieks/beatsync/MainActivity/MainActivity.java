@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.EditText;
@@ -23,6 +24,8 @@ import com.benupenieks.beatsync.Fragments.PlaylistSelectionFragment.PlaylistSele
 import com.benupenieks.beatsync.R;
 import com.benupenieks.beatsync.RowingActivity.RowingActivity;
 import com.benupenieks.beatsync.SpotifyController;
+
+import org.greenrobot.eventbus.EventBus;
 
 import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
@@ -83,10 +86,16 @@ public class MainActivity extends AestheticActivity implements
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
+        Log.d("Main Activity", "Activity Result Received");
+        Log.d("MAin Activity", " " + requestCode);
         switch (requestCode) {
             case SpotifyController.SPOTIFY_LOGIN_REQUEST_CODE:
                 SpotifyController.getInstance().verifyLogIn(
                         (PlaylistSelectionFragment) mPlaylistSelection, MainActivity.this, resultCode, intent);
+                break;
+            case MainPageFragment.ROWING_ACTIVITY_REQUEST_CODE:
+                Log.d("Main Activity", "Posting stroke rate");
+                EventBus.getDefault().post(intent.getIntExtra("stroke_rate", 1));
                 break;
         }
     }
