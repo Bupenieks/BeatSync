@@ -29,7 +29,8 @@
             android:layout_marginRight="8dp"
             app:layout_constraintRight_toRightOf="parent"
             android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/or_label" />
+            app:layout_constraintBottom_toTopOf="@+id/or_label"
+            android:cursorVisible="false"/>
 
 
         <android.support.constraint.ConstraintLayout

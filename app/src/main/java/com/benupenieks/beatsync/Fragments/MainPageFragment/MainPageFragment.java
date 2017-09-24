@@ -259,8 +259,9 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
         return mCurrentBpm;
     }
 
-    @Subscribe//(sticky = true, threadMode = ThreadMode.MAIN)
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateSongInfo(Track track) {
+        Log.d("TEST","HERE");
         mSongInfo.setText(String.format("%s\n%s", track.getName(), track.getArtist()));
     }
 

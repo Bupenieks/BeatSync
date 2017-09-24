@@ -23,6 +23,10 @@ import com.benupenieks.beatsync.Playlist;
 import com.benupenieks.beatsync.R;
 import com.benupenieks.beatsync.SpotifyController;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,6 +87,7 @@ public class PlaylistSelectionFragment extends Fragment
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         mPresenter.attachView(this);
+
     }
 
     @Override
@@ -91,7 +96,10 @@ public class PlaylistSelectionFragment extends Fragment
 
         View view = inflater.inflate(R.layout.fragment_playlist_selection, container, false);
         mPlaylistsContainer = (LinearLayout) view.findViewById(R.id.playlist_container);
-
+        List<Playlist> playlists = SpotifyController.getInstance().getAllPlaylists();
+        if (!playlists.isEmpty()) {
+            displayPlaylists(playlists, SpotifyController.getInstance().getSelectedPlaylists());
+        }
         return view;
     }
     

@@ -67,6 +67,7 @@ public class MainActivity extends AestheticActivity implements
 
         SpotifyController.getInstance().logIn(this);
 
+
     }
 
     // @Override

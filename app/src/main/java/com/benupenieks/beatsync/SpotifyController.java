@@ -121,7 +121,7 @@ public class SpotifyController implements
         Log.d("SpotifyController", "Playing track: " + track.getName()
                 + " BPM : " + track.getBPM());
 
-        mEventBus.post(track);
+        mEventBus.postSticky(track);
         mPlayer.playUri(new Player.OperationCallback() {
             @Override
             public void onSuccess() {
@@ -141,7 +141,7 @@ public class SpotifyController implements
                 + " BPM : " + track.getBPM());
         mPlayer.playUri(null, track.getUri(), 0, 0);
         mCurrentTrack = track;
-        mEventBus.post(track);
+        mEventBus.postSticky(track);
     }
 
     public void pause() {
@@ -216,6 +216,7 @@ public class SpotifyController implements
     }
 
     public void logIn(Activity parentActivity) {
+        if (isLoggedIn()) return;
         AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID,
                 AuthenticationResponse.Type.TOKEN,
                 REDIRECT_URI);
