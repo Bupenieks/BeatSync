@@ -1,8 +1,10 @@
 # BeatSync
-This is an Andriod app that will synchronize your rowing strokes with songs imported from selected Spotify playlists. 
+This is an Andriod app that will synchronize your rowing strokes with songs imported from selected Spotify playlists.
+It also acts as a simple music player equipped with play/pause, track seeking and playlist selection.
 
 ![beatsynchomepagesmall](https://user-images.githubusercontent.com/22259451/30777997-a335bc72-a096-11e7-8228-72264d5cf129.png)
 
+Note: A Spotify premium account is required to use this app.
 ## How to Use
 
 To begin, select which of your Spotify playlist you would like songs to be played from. To start automatic synchronization, enter the rowing program state and begin rowing. The app will allot 15 seconds to analyzing your strokes and then begin playing matched songs. Alternatively, manually enter your target stroke rate for more precise synchronization.
