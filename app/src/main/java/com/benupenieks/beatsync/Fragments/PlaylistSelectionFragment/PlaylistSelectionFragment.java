@@ -100,6 +100,19 @@ public class PlaylistSelectionFragment extends Fragment
         if (!playlists.isEmpty()) {
             displayPlaylists(playlists, SpotifyController.getInstance().getSelectedPlaylists());
         }
+        view.findViewById(R.id.refresh_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SpotifyController spotifyController = SpotifyController.getInstance();
+                if (!spotifyController.isLoggedIn()) {
+                    spotifyController.logIn(getActivity());
+                } else {
+                    SpotifyController.getInstance().updateUserInfo(PlaylistSelectionFragment.this);
+                    mCheckBoxPlaylistMap.clear();
+                    mPlaylistsContainer.removeAllViews();
+                }
+            }
+        });
         return view;
     }
     
@@ -155,7 +168,7 @@ public class PlaylistSelectionFragment extends Fragment
                 }
             });
             mCheckBoxPlaylistMap.put(cb, playlist);
-            mPlaylistsContainer.addView(cb);
+            mPlaylistsContainer.addView(cb, 0);
             if (selectedPlaylists.contains(playlist)) {
                 cb.setChecked(true);
             }
