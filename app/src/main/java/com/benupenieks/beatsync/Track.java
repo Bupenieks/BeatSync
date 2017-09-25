@@ -26,6 +26,7 @@ public class Track {
     private String mTrackArtist;
 
     private int mTrackBPM;
+    private int mTrackDuration;
 
     private Playlist mParentPlaylist;
 
@@ -44,6 +45,7 @@ public class Track {
         try {
             mTrackName = mTrackData.getString("name");
             mTrackArtist = mTrackData.getJSONArray("artists").getJSONObject(0).getString("name");
+            mTrackDuration = mTrackData.getInt("duration_ms");
         } catch (JSONException e) {
             e.printStackTrace();
         }

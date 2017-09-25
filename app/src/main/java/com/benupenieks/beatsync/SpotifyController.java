@@ -113,7 +113,7 @@ public class SpotifyController implements
         playTrack(track, errorListener, PLAY_NEW);
     }
 
-    public void playTrack(Track track, final MainPageContract.Interactor errorListener, final Interaction interaction) {
+    public void playTrack(final Track track, final MainPageContract.Interactor errorListener, final Interaction interaction) {
         if (interaction != FORCE_PLAY && !trackStack.empty() && track == trackStack.peek()) {
             errorListener.playDifferentTrack(track);
             return;
@@ -128,6 +128,19 @@ public class SpotifyController implements
         mPlayer.playUri(new Player.OperationCallback() {
             @Override
             public void onSuccess() {
+                mPlayer.addNotificationCallback(new Player.NotificationCallback() {
+                    @Override
+                    public void onPlaybackEvent(PlayerEvent playerEvent) {
+                        if (playerEvent == PlayerEvent.kSpPlaybackNotifyAudioDeliveryDone) {
+                            errorListener.playDifferentTrack(track);
+                        }
+                    }
+
+                    @Override
+                    public void onPlaybackError(Error error) {
+
+                    }
+                });
                 errorListener.onSuccessfulInteraction(interaction);
             }
 
