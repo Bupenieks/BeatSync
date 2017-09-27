@@ -3,7 +3,7 @@ This is an Andriod app that will synchronize your rowing strokes with songs impo
 It also acts as a simple music player equipped with play/pause, track seeking and playlist selection.
 
 
-[![webp net-resizeimage](https://user-images.githubusercontent.com/22259451/30799126-cba264da-a1a9-11e7-87d3-cb4a000ad537.png)](https://play.google.com/store/apps/details?id=com.benupenieks.beatsync&hl=en)
+[![webp net-resizeimage](https://user-images.githubusercontent.com/22259451/30799126-cba264da-a1a9-11e7-87d3-cb4a000ad537.png)](https://play.google.com/store/apps/details?id=com.benupenieks.beatsync&hl=en) Beta
 
 ![beatsynchomepagesmall](https://user-images.githubusercontent.com/22259451/30777997-a335bc72-a096-11e7-8228-72264d5cf129.png)
 
