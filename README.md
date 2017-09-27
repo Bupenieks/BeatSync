@@ -7,7 +7,7 @@ It also acts as a simple music player equipped with play/pause, track seeking an
 
 ![beatsynchomepagesmall](https://user-images.githubusercontent.com/22259451/30777997-a335bc72-a096-11e7-8228-72264d5cf129.png)
 
-Note: A Spotify premium account is required to use this app.
+Note: A Spotify premium account is required to use this app. Currently, playlists created by someone other than the current user (i.e. copied/followed playlists on spotify) will not work.
 ## How to Use
 
 To begin, select which of your Spotify playlist you would like songs to be played from. To start automatic synchronization, enter the rowing program state and begin rowing. The app will allot 15 seconds to analyzing your strokes and then begin playing matched songs. Alternatively, manually enter your target stroke rate for more precise synchronization.
