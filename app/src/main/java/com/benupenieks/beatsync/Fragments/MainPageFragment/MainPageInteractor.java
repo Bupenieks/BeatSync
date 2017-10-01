@@ -92,7 +92,7 @@ public class MainPageInteractor implements MainPageContract.Interactor {
         mValidTracks.clear();
         Map<Integer, ArrayList<Track>> BpmTrackMap = mSpotify.getBpmTrackMap();
         List<Playlist> selectedPlaylists = mSpotify.getSelectedPlaylists();
-        Log.d(TAG, selectedPlaylists.toString());
+        //Log.d(TAG, selectedPlaylists.toString());
         for (int i = bpm; i < MAX_BPM; i+=bpm) {
             for (int j = i - mBufferRange; j < i + mBufferRange || j == i; j++) {
                 if (j <= 0) { continue; }

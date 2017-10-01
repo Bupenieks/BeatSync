@@ -111,7 +111,7 @@ public class Playlist {
         Response.Listener<JSONObject> responseListener = new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Log.d("mResponseQueue", "Response Received");
+                //Log.d("mResponseQueue", "Response Received");
                 try {
                     JSONArray featureList = response.getJSONArray("audio_features");
                     for (int i = 0; i < featureList.length(); i++) {
@@ -135,7 +135,7 @@ public class Playlist {
         Response.ErrorListener errorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("SpotifyController", "updateTrackList failed");
+                //Log.d("SpotifyController", "updateTrackList failed");
             }
         };
 

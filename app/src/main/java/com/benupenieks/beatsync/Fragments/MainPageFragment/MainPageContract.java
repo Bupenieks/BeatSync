@@ -55,6 +55,8 @@ public interface MainPageContract {
 
         void onSuccess(SpotifyController.Interaction interaction);
 
+        void rawTrackInteraction(SpotifyController.Interaction interaction);
+
     }
 
     interface Interactor{

@@ -24,6 +24,8 @@ public class MainPagePresenter implements MainPageContract.Presenter{
 
     private static final int MAX_BPM = 300;
 
+    private boolean mPlayButtonState = false;
+
     public MainPagePresenter() {}
 
     @Override
@@ -47,6 +49,11 @@ public class MainPagePresenter implements MainPageContract.Presenter{
     }
 
     @Override
+    public void rawTrackInteraction(SpotifyController.Interaction interaction) {
+        mInteractor.trackInteraction(interaction);
+    }
+
+    @Override
     public void onPlayButtonPress(String bpmContents, int currentBpm, boolean state) {
         if (state) {
             SpotifyController.Interaction interaction = RESUME;
@@ -63,11 +70,11 @@ public class MainPagePresenter implements MainPageContract.Presenter{
                     mInteractor.trackInteraction(interaction);
                 } else {
                     mView.displayErrorToast("Enter a valid BPM");
-                    mView.setPlayButtonState(!state);
+                    onError(SpotifyController.Interaction.PLAY_NEW);
                 }
             } else {
                 mView.displayErrorToast("Enter a BPM");
-                mView.setPlayButtonState(!state);
+                onError(SpotifyController.Interaction.PLAY_NEW);
             }
         } else {
             mInteractor.trackInteraction(PAUSE);
@@ -77,7 +84,13 @@ public class MainPagePresenter implements MainPageContract.Presenter{
     @Override
     public void onForwardButtonPress(int bpm, int currentBpm) {
         mInteractor.updateValidTracks(bpm);
-        mInteractor.trackInteraction(SpotifyController.Interaction.NEXT_TRACK);
+        if (bpm > 0 && bpm < MAX_BPM) {
+            mInteractor.trackInteraction(SpotifyController.Interaction.NEXT_TRACK);
+        } else {
+            mView.displayErrorToast("Enter a valid BPM");
+            onError(SpotifyController.Interaction.NEXT_TRACK);
+        }
+
     }
 
     @Override
@@ -110,6 +123,8 @@ public class MainPagePresenter implements MainPageContract.Presenter{
     @Override
     public void onError(SpotifyController.Interaction interaction) {
         switch (interaction) {
+            case RESUME:
+            case NEXT_TRACK:
             case PLAY_NEW:
                 mView.displayLowPriorityErrorToast("Could not play track");
                 mView.setPlayButtonState(false);
@@ -117,10 +132,6 @@ public class MainPagePresenter implements MainPageContract.Presenter{
                 break;
             case PAUSE:
                 mView.displayLowPriorityErrorToast("Could not pause track");
-                mView.setPlayButtonState(true);
-                break;
-            case NEXT_TRACK:
-                mView.displayLowPriorityErrorToast("Could not play next track");
                 break;
             case PREVIOUS_TRACK:
                 mView.displayLowPriorityErrorToast("No previous track");

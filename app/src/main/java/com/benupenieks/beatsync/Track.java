@@ -26,7 +26,6 @@ public class Track {
     private String mTrackArtist;
 
     private int mTrackBPM;
-    private int mTrackDuration;
 
     private Playlist mParentPlaylist;
 
@@ -45,7 +44,6 @@ public class Track {
         try {
             mTrackName = mTrackData.getString("name");
             mTrackArtist = mTrackData.getJSONArray("artists").getJSONObject(0).getString("name");
-            mTrackDuration = mTrackData.getInt("duration_ms");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -94,7 +92,7 @@ public class Track {
         Response.Listener<JSONObject> responseListener = new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Log.d("mResponseQueue", "Response Received");
+                //Log.d("mResponseQueue", "Response Received");
                 try {
                     mTrackFeatures = response;
                     mTrackBPM = mTrackFeatures.getInt("tempo");
@@ -107,7 +105,7 @@ public class Track {
         Response.ErrorListener errorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("Track", "getTrackFeatures failed");
+                //Log.d("Track", "getTrackFeatures failed");
             }
         };
 

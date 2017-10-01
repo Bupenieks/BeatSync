@@ -118,11 +118,12 @@ public class SpotifyController implements
             errorListener.playDifferentTrack(track);
             return;
         } else if (mSelectedPlaylists.isEmpty()) {
+            errorListener.onError(PLAY_NEW);
             errorListener.onError("No playlists selected");
             return;
         }
-        Log.d("SpotifyController", "Playing track: " + track.getName()
-                + " BPM : " + track.getBPM());
+        //Log.d("SpotifyController", "Playing track: " + track.getName()
+               // + " BPM : " + track.getBPM());
 
         mEventBus.postSticky(track);
         mPlayer.playUri(new Player.OperationCallback() {
@@ -153,39 +154,30 @@ public class SpotifyController implements
     }
 
     public void playTrack(Track track) {
-        Log.d("SpotifyController", "Playing track: " + track.getName()
-                + " BPM : " + track.getBPM());
+        //Log.d("SpotifyController", "Playing track: " + track.getName()
+                //+ " BPM : " + track.getBPM());
         mPlayer.playUri(null, track.getUri(), 0, 0);
         mCurrentTrack = track;
         mEventBus.postSticky(track);
     }
 
-    public void pause() {
-        mPlayer.pause(new Player.OperationCallback() {
-            @Override
-            public void onSuccess() {
-                Log.d(TAG, "Pause successful");
-            }
-
-            @Override
-            public void onError(Error error) {
-                Log.d(TAG, error.toString());
-            }
-        });}
-
     public void trackInteraction(Interaction interaction, final MainPageContract.Interactor listener) {
+        if (!isLoggedIn()|| mPlayer == null) {
+            listener.onError("You are not logged in. Refresh on the playlist selection screen");
+            return;
+        }
         switch (interaction) {
             case PAUSE:
                 mPlayer.pause(new Player.OperationCallback() {
                     @Override
                     public void onSuccess() {
-                        Log.d(TAG, "Pause successful");
+                        //Log.d(TAG, "Pause successful");
                         listener.onSuccessfulInteraction(PAUSE);
                     }
 
                     @Override
                     public void onError(Error error) {
-                        Log.d(TAG, error.toString());
+                        //Log.d(TAG, error.toString());
                         listener.onError(PAUSE);
                     }
                 });
@@ -195,14 +187,14 @@ public class SpotifyController implements
                     mPlayer.resume(new Player.OperationCallback() {
                         @Override
                         public void onSuccess() {
-                            Log.d(TAG, "Resume successful");
+                            //Log.d(TAG, "Resume successful");
                             listener.onSuccessfulInteraction(RESUME);
                         }
 
                         @Override
                         public void onError(Error error) {
-                            Log.d(TAG, error.toString());
-                            listener.onError(PLAY_NEW);
+                            //Log.d(TAG, error.toString());
+                            listener.onError(RESUME);
                         }
                     });
                     break;
@@ -259,8 +251,8 @@ public class SpotifyController implements
 
                 @Override
                 public void onError(Throwable throwable) {
-                    Log.e("SpotifyController", "Could not initialize player: "
-                            + throwable.getMessage());
+                    //Log.e("SpotifyController", "Could not initialize player: "
+                            //+ throwable.getMessage());
                 }
             });
         }
@@ -268,7 +260,7 @@ public class SpotifyController implements
 
     @Override
     public void onLoggedIn() {
-        Log.d("SpotifyController", "User logged in");
+        //Log.d("SpotifyController", "User logged in");
     }
 
     public void updateUserInfo(PlaylistSelectionFragment listener) {
@@ -278,7 +270,7 @@ public class SpotifyController implements
 
     @Override
     public void onLoggedOut() {
-        Log.d("SpotifyController", "Logged out");
+        //Log.d("SpotifyController", "Logged out");
         mUserId = null;
         mUserAccessToken = null;
         mPlaylists.clear();
@@ -287,22 +279,22 @@ public class SpotifyController implements
 
     @Override
     public void onLoginFailed(Error error) {
-        Log.d("SpotifyController", "Login failed");
+        //Log.d("SpotifyController", "Login failed");
     }
 
     @Override
     public void onTemporaryError() {
-        Log.d("SpotifyController", "Temporary error occurred");
+        //Log.d("SpotifyController", "Temporary error occurred");
     }
 
     @Override
     public void onConnectionMessage(String message) {
-        Log.d("SpotifyController", "Received connection message: " + message);
+        //Log.d("SpotifyController", "Received connection message: " + message);
     }
 
     @Override
     public void onPlaybackEvent(PlayerEvent playerEvent) {
-        Log.d("SpotifyController", "Playback event received: " + playerEvent.name());
+        //Log.d("SpotifyController", "Playback event received: " + playerEvent.name());
         switch (playerEvent) {
             // Handle event type as necessary
             default:
@@ -312,7 +304,7 @@ public class SpotifyController implements
 
     @Override
     public void onPlaybackError(Error error) {
-        Log.d("SpotifyController", "Playback error received: " + error.name());
+        //Log.d("SpotifyController", "Playback error received: " + error.name());
         switch (error) {
             // Handle error type as necessary
             default:
@@ -339,7 +331,7 @@ public class SpotifyController implements
             @Override
             public void onResponse(JSONObject response) {
                 // Display the first 500 characters of the response string.
-                Log.d("mResponseQueue", "Response Received");
+                //Log.d("mResponseQueue", "Response Received");
                 try {
                     mUserId = response.getString("id");
                 } catch (JSONException e) {
@@ -351,7 +343,7 @@ public class SpotifyController implements
         Response.ErrorListener errorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("SpotifyController", "updateUserId failed");
+                //Log.d("SpotifyController", "updateUserId failed");
                 if (error.networkResponse.statusCode != 404 ) {
                     updateUserId();
                 }
@@ -372,7 +364,7 @@ public class SpotifyController implements
         Response.Listener responseListener = new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Log.d("mResponseQueue", "Response Received");
+                //Log.d("mResponseQueue", "Response Received");
                 String nextPage;
                 try {
                     JSONArray items = response.getJSONArray("items");
@@ -389,7 +381,7 @@ public class SpotifyController implements
                     }
                     nextPage = response.getString("next");
                     if (!nextPage.equals("null")) {
-                        Log.d("mResponseQueue", nextPage);
+                        //Log.d("mResponseQueue", nextPage);
                         updatePlaylists(nextPage, listener);
                         return;
                     }
@@ -404,7 +396,7 @@ public class SpotifyController implements
         Response.ErrorListener errorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("SpotifyController", "updatePlaylists failed");
+                //Log.d("SpotifyController", "updatePlaylists failed");
                 if (error.networkResponse.statusCode != 404 ) {
                     updatePlaylists(requestUrl, listener);
                 }
@@ -428,7 +420,7 @@ public class SpotifyController implements
         Response.Listener<JSONObject> responseListener = new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Log.d("mResponseQueue", "Response Received");
+                //Log.d("mResponseQueue", "Response Received");
                 String nextPage;
                 try {
                     JSONArray items = response.getJSONArray("items");
@@ -454,7 +446,7 @@ public class SpotifyController implements
         Response.ErrorListener errorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("SpotifyController", "updateTrackList failed");
+                //Log.d("SpotifyController", "updateTrackList failed");
                 if (error.networkResponse.statusCode != 404 ) {
                     updateTrackList(requestUrl, playlist);
                 }

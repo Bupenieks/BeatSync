@@ -7,15 +7,18 @@ android {
         applicationId "com.benupenieks.beatsync"
         minSdkVersion 21
         targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
+        versionName '0.9'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        versionCode 4
     }
     buildTypes {
         release {
+            debuggable false
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    productFlavors {
     }
 }
 
@@ -26,16 +29,13 @@ repositories {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-
     compile 'com.spotify.sdk:spotify-android-auth-1.0.0@aar'
     compile 'com.spotify.sdk:spotify-player-24-noconnect-2.20b@aar'
-
     compile 'com.fxn769:musicwave:1.0'
-
     compile 'com.github.PhilJay:MPAndroidChart:v3.0.2'
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'com.github.recruit-lifestyle:PlayPauseButton:1.0'

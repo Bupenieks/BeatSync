@@ -55,6 +55,7 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
     private MainPagePresenter mPresenter = new MainPagePresenter();
 
     private Toast mCurrentToast = null;
+    private Toast mCurrentLowPriorityToast = null;
     private EditText mBpmBox;
     private LineChart mAccelerometerGraph;
     private PlayPauseButton mPlayButton;
@@ -138,6 +139,8 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
                 String bpm = mBpmBox.getText().toString();
                 if (!bpm.isEmpty()) {
                     mPresenter.onForwardButtonPress(Integer.parseInt(bpm), mCurrentBpm);
+                } else {
+                    mPresenter.onError(SpotifyController.Interaction.NEXT_TRACK);
                 }
             }
         });
@@ -153,7 +156,8 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
         view.findViewById(R.id.rowing_toggle).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SpotifyController.getInstance().pause();
+                mPresenter.rawTrackInteraction(SpotifyController.Interaction.PAUSE);
+
                 Intent intent = new Intent(getContext(), RowingActivity.class);
                 startActivityForResult(intent, ROWING_ACTIVITY_REQUEST_CODE);
             }
@@ -210,6 +214,8 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
         Toast toast = Toast.makeText(getContext(), errorMsg, Toast.LENGTH_SHORT);
         if (mCurrentToast != null) {
             mCurrentToast.cancel();
+        } else if(mCurrentLowPriorityToast != null) {
+            mCurrentLowPriorityToast.cancel();
         }
         TextView view = (TextView) toast.getView().findViewById(android.R.id.message);
         if (view != null) {
@@ -222,12 +228,15 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
 
     @Override
     public void displayLowPriorityErrorToast(String errorMsg) {
-        if (mCurrentToast != null) return;
+        if (mCurrentLowPriorityToast != null) {
+            mCurrentLowPriorityToast.cancel();
+        };
         Toast toast = Toast.makeText(getContext(), errorMsg, Toast.LENGTH_SHORT);
         TextView view = (TextView) toast.getView().findViewById(android.R.id.message);
         if (view != null) {
             view.setGravity(Gravity.CENTER);
         }
+        mCurrentLowPriorityToast = toast;
         toast.show();
     }
 
@@ -264,13 +273,13 @@ public class MainPageFragment extends Fragment implements MainPageContract.View 
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void updateSongInfo(Track track) {
-        Log.d("TEST","HERE");
+        //Log.d("TEST","HERE");
         mSongInfo.setText(String.format("%s\n%s", track.getName(), track.getArtist()));
     }
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onRowingResult(Integer strokeRate) {
-        Log.d("ROWINGRESULT", "HERE");
+        //Log.d("ROWINGRESULT", "HERE");
         mPresenter.onForwardButtonPress(strokeRate, mCurrentBpm);
         mCurrentBpm = strokeRate;
         mBpmBox.setText(Integer.toString(strokeRate));

@@ -60,13 +60,13 @@ public class AccelerometerInteractor implements RowingContract.Interactor, Senso
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
         beginRowing();
        // mSensorManager.registerListener(this, mSensor, mSensorManager.SENSOR_DELAY_NORMAL);
-        Log.d(TAG, "init: ");
+        //Log.d(TAG, "init: ");
     }
 
     public void onAccuracyChanged(Sensor sensor, int accuracy) {}
 
     public void onSensorChanged(SensorEvent event) {
-        //Log.d(TAG, "onSensorChanged: ");
+        ////Log.d(TAG, "onSensorChanged: ");
         int dataSize = mMovingAverageDataList.size();
         if (dataSize >= MOVING_AVERAGE_RANGE) {
             mMovingAverageDataList.remove(0);
@@ -81,14 +81,14 @@ public class AccelerometerInteractor implements RowingContract.Interactor, Senso
                 if (mBeginSynchronizing) {
                     if (mStrokeTimes.isEmpty()) {
                         mStrokeTimes.add(dataEvent.mTimeStamp / 1000000);
-                        Log.d(TAG, String.format("Added %d ms to mStrokeTimes", dataEvent.mTimeStamp / 1000000));
+                        //Log.d(TAG, String.format("Added %d ms to mStrokeTimes", dataEvent.mTimeStamp / 1000000));
                     } else {
                         if (dataEvent.mMovingAverage > mAccelerationAverage
                                 && mSensorData.get(mSensorData.size() - 1).mMovingAverage < mAccelerationAverage) {
                             long timeDifferenceMs = (dataEvent.mTimeStamp / 1000000 - mStrokeTimes.get(mStrokeTimes.size() - 1)); // Nano -> Milli
-                            Log.d(TAG, " " + timeDifferenceMs + " : " + dataEvent.mTimeStamp / 1000000 + " : " + mStrokeTimes.get(mStrokeTimes.size() - 1));
+                            //Log.d(TAG, " " + timeDifferenceMs + " : " + dataEvent.mTimeStamp / 1000000 + " : " + mStrokeTimes.get(mStrokeTimes.size() - 1));
                             mStrokeTimes.add(dataEvent.mTimeStamp / 1000000);
-                            Log.d(TAG, String.format("Added %d ms to mStrokeTimes", (dataEvent.mTimeStamp / 1000000)));
+                            //Log.d(TAG, String.format("Added %d ms to mStrokeTimes", (dataEvent.mTimeStamp / 1000000)));
                         }
                     }
                 }
@@ -154,23 +154,23 @@ public class AccelerometerInteractor implements RowingContract.Interactor, Senso
 
     public void beginRowing() {
         resume();
-        Log.d(TAG, "START TIMER");
+        //Log.d(TAG, "START TIMER");
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 mBeginReading = true;
-                Log.d(TAG, "Beginning to read sensor data");
+                //Log.d(TAG, "Beginning to read sensor data");
 
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d(TAG, "Beginning to process sensor data");
+                        //Log.d(TAG, "Beginning to process sensor data");
 
                         mHandler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 int strokeRate = calculateStrokeRate();
-                                Log.d(TAG, String.format("Finished analysis. Average stroke rate: %d", strokeRate));
+                                //Log.d(TAG, String.format("Finished analysis. Average stroke rate: %d", strokeRate));
                                 mSensorManager.unregisterListener(AccelerometerInteractor.this);
                                 mListener.onRowingComplete(strokeRate);
                             }

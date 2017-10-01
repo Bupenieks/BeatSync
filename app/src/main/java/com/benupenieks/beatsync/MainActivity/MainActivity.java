@@ -87,15 +87,15 @@ public class MainActivity extends AestheticActivity implements
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
-        Log.d("Main Activity", "Activity Result Received");
-        Log.d("MAin Activity", " " + requestCode);
+        //Log.d("Main Activity", "Activity Result Received");
+        //Log.d("MAin Activity", " " + requestCode);
         switch (requestCode) {
             case SpotifyController.SPOTIFY_LOGIN_REQUEST_CODE:
                 SpotifyController.getInstance().verifyLogIn(
                         (PlaylistSelectionFragment) mPlaylistSelection, MainActivity.this, resultCode, intent);
                 break;
             case MainPageFragment.ROWING_ACTIVITY_REQUEST_CODE:
-                Log.d("Main Activity", "Posting stroke rate");
+                //Log.d("Main Activity", "Posting stroke rate");
                 EventBus.getDefault().post(intent.getIntExtra("stroke_rate", 1));
                 break;
         }

@@ -138,6 +138,7 @@ public class RowingActivity extends AestheticActivity implements RowingContract.
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mPresenter.onPause();
     }
 
 
